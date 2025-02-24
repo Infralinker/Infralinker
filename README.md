@@ -17,7 +17,7 @@ Welcome to InfraLinker, the comprehensive DataCenter infrastructure assets manag
 
 ## About infralinker
 <p align="center">
-<img src="Ralationship diagrame infraLinker.webp" alt="InfraLinker big Logo" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
+<img src="images/diagrame_infraLinker.webp" alt="InfraLinker big Logo" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
 </p>
 InfraLinker is a modern data center infrastructure assets management solution designed to make managing and tracking your data center assets easier and more efficient. We provide a centralized database that helps eliminate common errors and data leaks associated with traditional methods such as spreadsheets and text documents.
 
@@ -61,4 +61,4 @@ InfraLinker was built specifically to serve the needs of IT engineers and operat
 * Detailed, automatic change logging.
 * Email notifications for any new/closed tickets, vulnerabilities, or contracts.
   
-![InfraLinker big Logo](dashbord_dc.png)
+![InfraLinker big Logo](images/dashbord_dc.png)
