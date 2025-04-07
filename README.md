@@ -3,7 +3,7 @@
 <img src="images/big-logo.png" alt="InfraLinker big Logo" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
 </p>
 
-Viisit Website [infralinker.net](https://www.infralinker.net).
+Visit Website [infralinker.net](https://www.infralinker.net).
 
 ## Want to explore? 
 Check out our public demo right now! : [demo.infralinker.net](https://demo.infralinker.net).
