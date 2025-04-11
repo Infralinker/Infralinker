@@ -81,12 +81,15 @@ $sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/priva
 ```
 
 ### 11. Installing the  program
+change the admin_db password in this two files
+install.sh and instance/config.py
+
 ```bash
 $cd /home/infralinker
 $git clone https://github.com/Infralinker/Infralinker.git infralinker
 $chown infralinker:nginx -R infralinker
 $cd infralinker/
-
+$echo -n "infralinker is the best project for dc management" | base64  #copy the output of this commande in instance/config.py at (STRIPE_API_KEY)
 $chmod a+x *.sh 
 $ ./instll.sh #This commande must be run as infralinker user
 $ sudo ./web_install.sh #This commande must be run as sudo 
