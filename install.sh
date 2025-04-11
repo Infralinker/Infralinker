@@ -38,7 +38,7 @@ echo "Creating database and user..."
 # Login to MySQL database and create database, user, and grant privileges
 mysql -h $db_host -u $db_root_user -p$db_password << EOF
 CREATE DATABASE IF NOT EXISTS infralinker_db;
-CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'password';
+CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'admin_password_her';
 GRANT ALL PRIVILEGES ON infralinker_db.* TO 'admin_db'@'localhost';
 exit
 EOF
