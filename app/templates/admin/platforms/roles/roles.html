@@ -1,0 +1,115 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}TAGS LISTS{% endblock %}
+{% block body %}
+
+<link href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css" rel="stylesheet">
+<script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section">
+    
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    
+    <h1 style="text-align:center;">DEVICE ROLE LIST</h1>
+    {% if device_roles %}
+    
+    <div class="container">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+
+        <a href="{{ url_for('admin.new_device_role') }}" class="btn btn-success btn-sm">
+            {{ render_icon('plus-circle') }}
+            ADD NEW DEVICE ROLE
+        </a>
+        </div>
+        <table
+        data-toggle="table"
+        data-search="true"
+        data-show-columns="true"
+        data-pagination="true"
+        data-page-size="50" data-page-list="[25, 50, 100, 200]"
+        data-buttons-class="info" class="mb-5">
+                  <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="1%">#ID</th>
+                    <th width="20%"> DEVICE TYPE NAME </th>
+                    <th width="30%"> DESCRIPTION </th>
+                    <th width="10%"> DEVICE COUNT </th>
+                    <th width="10%"> COLOR </th>
+                    <th width="5%"> ACTIONS </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for device_type in device_roles %}
+                <tr>
+                    <th><strong> {{ device_type.id}} </strong></th>
+                    <td> {{ device_type.name}} </td>
+                    <td> {{ device_type.description}} </td>
+                    <td> {{ device_type.platforms.count()}} </td>
+                    <td><strong><span style="background-color: {{ device_type.device_color}};" class="badge"> {{ device_type.name }} </span></strong> </td>
+                    <th>
+                        
+                        <div class="btn-group btn-group-fixed">
+                            {% if current_user.is_admin or current_user.control_platforms %}
+                        <a href="{{ url_for('admin.edit_device_role', id=device_type.id) }}" title="Edit Device Type!" class="btn btn-sm btn-primary">
+                            {{ render_icon('pen', size='20px') }}
+                        </a>
+                        <a href="{{ url_for('admin.delete_device_role', id=device_type.id) }}" title="Remove tag from Database." class="confirmation_remove btn btn-sm btn-danger">
+                            {{ render_icon('trash', size='20px') }}
+                        </a>
+                        {% else %}
+                        <a  title="Edit Device Type!" class="btn btn-sm btn-primary disabled">
+                            {{ render_icon('pen', size='20px') }}
+                        </a>
+                        <a  title="Remove tag from Database." class=" btn btn-sm btn-danger disabled">
+                            {{ render_icon('trash', size='20px') }}
+                        </a>
+                        {% endif %}
+                    </div>
+                    </th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align: center">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO DEVICE ROLE ADD YET. </h3>
+            <hr class="intro-divider">
+            <a href="{{ url_for('admin.new_device_role') }}" class="btn btn-success btn-sm">
+                {{ render_icon('plus-cercle', size='20px') }}
+                ADD NEW DEVICE ROLE
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $('a.confirmation_remove').confirm({
+        title: "CONFIRMATION",
+        content: "Are you sure you want to delete this Device Role ?!",
+    });
+    $('a.confirmation_remove').confirm({
+        buttons: {
+            hey: function() {
+                location.href = this.$target.attr('href');
+            }
+        }
+    });
+</script>
+{% endblock %}

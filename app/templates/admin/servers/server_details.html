@@ -1,0 +1,169 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}SERVER DETAILS{% endblock %}
+{% block body %}
+<link href="{{ url_for('static', filename='css/rack_style.css')}}" type="text/css" rel="stylesheet" />
+<style>
+    hr{
+   margin: 10px;
+   margin-left: auto;
+}
+</style>
+<div class="content-section"  style="margin-left: 50px; margin-right: 50px;">
+    
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    <h1 style="text-align:center;">SERVER / IP DETAILS</h1>
+    
+    <div class="container-fluid">
+        <div style="text-align: right;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            
+                <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.edit_server', id=server.id) }}" class="btn btn-sm btn-warning">
+                {{ render_icon('pen') }} EDIT SERVER</a>
+        </div>
+        <br>
+        <div class="row" style="font-family: Nunito;">
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+                    
+
+                    <div class="card-body" style="font-size:18px;">
+                        <legend style="font-size: 25px; font-weight: 900;"> DETAILS </legend> 
+                        <br>
+                        <p> <strong> SERVER NAME : </strong> <span>
+                                {{server.server_name}} </span> </p>
+                        <hr>
+                        <p> <strong> IP ADDRESS : </strong> <span>
+                                {{server.ip_address}} </span> </p>
+                        <hr>
+                        <p> <strong> OPERATION SYSTEM : </strong> <span
+                            > {{server.operating_system}} </span> </p>
+                        <hr>
+                        <p> <strong> OS VERSION : </strong> <span>
+                                {{server.os_version}} </span> </p>
+                        <hr>
+                        <p> <strong> TYPE : </strong> <span>
+                                {% if server.type == "VM" %}
+                                <span class="badge teal"> {{ server.type }}</span>
+                                {% elif server.type == "VIP" %}
+                                <span class="badge red"> {{ server.type }}</span>
+                                {% elif server.type == "POD" %}
+                                <span class="badge yellow"> {{ server.type }}</span>
+                                {% else %}
+                                <span class="badge navy"> {{ server.type }}</span>
+                                {% endif %}
+                            </span> </p>
+                        <hr>
+                        <p> <strong> INTERNAL OWNER : </strong> <span>
+                                {{server.department.name}} </span> </p>
+                        <hr>
+                         <p> <strong> PART OF PROJECT : </strong> <span>
+                                {{server.project.project_name}} </span> </p>
+                        <hr>
+                        <p> <strong> VITALITY CLASSIFICATION : </strong> <span
+                            >
+                                {% if server.vitality_classification == "VITAL" %} <span
+                                    class="badge bg-danger">VITAL</span>
+                                {% elif server.vitality_classification == "IMPORTANT" %} <span
+                                    class="badge bg-warning">IMPORTANT</span>
+                                {% else %} <span class="badge bg-success">MIDDLE</span>
+                                {% endif %}
+                            </span> </p>
+                        <hr>
+
+                        <p> <strong> ADD BY : </strong> <span>
+                                {{get_UserName(server.add_by)[0]}} {{get_UserName(server.add_by)[1]}} </span> </p>
+                        <hr>
+                        <p> <strong> ADD DATE : </strong> <span>
+                                {{server.add_date}} </span> </p>
+                        <hr>
+                        <p> <strong> NETWORK INFOMATIONS : </strong> <span
+                            > {{server.network.net_name}} {{server.network.datacenter.dc_name}} <strong> [
+                                    {{server.network.gatway}} / {{server.network.mask}} ] </strong></span> </p>
+                        <hr>
+                        <p> <strong> DATA CENTER : </strong> 
+                                    {% set complet_name, color = get_cloud_provider_details(server.network.datacenter.dc_type) %}
+                                    <strong><span style="background-color: {{ color }}; font-size: 18px; " class="badge" title="{{ complet_name }} ">   {{server.network.datacenter.dc_name}}  </span></strong>  
+
+                                </strong></span> </p>
+                        <hr>
+                        <p> <strong> DEVICE NAME : </strong> <span>
+                                {{server.platform.platform_name}} </span> </p>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;">NOTES</legend> <span>
+                                {{server.notes | safe}}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> APPLICATIONS </legend>
+                        
+                            {% if server.applications_list %} {% for app in server.applications_list.split(",") %}
+                        <div style="padding-top: 3px; display:inline-block;"><span style="font-size:14px;"
+                                class="badge bg-primary">{{app}}</span></div>
+                        {% endfor %}{% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> OPEN PORTS </legend>
+                        
+                            {% if server.applications_list %}
+                            {% set all_applications = server.applications_list.split(',') %}
+                            {% for application in all_applications %}
+                            {% for app in get_ports_from_app_name(application.strip()).split(',') %}
+                            <span style="font-size:14px;" class="badge bg-success"> {{app}} </span>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endif %}
+                            
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 23px; font-weight: 900;"> TAGS
+                        
+                            </legend>
+                            {% if server.tags %}
+                            {% for tag in server.tags.rsplit(",") %}
+                            <strong><span style="background-color: {{ get_tag_color(tag.strip()) }};" class="badge">
+                                {{ render_icon('tag') }} {{tag}} </span></strong>
+                            {% endfor %}
+                            {% endif %}
+                            <!-- <span style="font-size: 22px;"> {{server.tags}}</span>  </p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

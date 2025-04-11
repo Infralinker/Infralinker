@@ -1,0 +1,50 @@
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}New Application{% endblock %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+<div class="content-section">
+ <div class="container">
+    <div class="card border-default">
+      <div class="card-header">
+        <strong style="font-size:25px;  font-weight: 900;">{% if new_application %}
+                    ADD NEW APPLICATION
+                    {% else %}
+                    EDIT APPLICATION
+                    {% endif %}
+                    <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm float-end">CANCEL</a>
+                </strong>
+            </div>
+            <div class="card-body">
+                <br />
+                {% if not current_user.control_applications and not current_user.is_admin %}
+                <fieldset disabled="disabled">
+                    {% else %}
+                <fieldset>
+                    {% endif %}
+                    {{ render_form(form, button_style='success', button_size='block') }}
+            </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $('#tags').tokenfield({
+      autocomplete: {
+        source: [{% for tag in get_tags_name() %} '{{tag.tag_name}}', {% endfor %}],
+        delay: 100
+      },
+      showAutocompleteOnFocus: true
+    })
+    
+    </script>
+{% endblock %}

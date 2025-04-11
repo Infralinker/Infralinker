@@ -1,0 +1,239 @@
+body,
+html {
+    width: 100%;
+    height: 100%;
+    zoom: 85%;
+    background-color: #e1ebfa;
+    letter-spacing: 0.2px;
+}
+
+
+h1,
+h2,
+h3 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.container {
+    width: 70%;
+}
+
+
+ul {
+    font-family: 'Nunito', sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+li {
+    font-family: 'Nunito', sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+    /* margin: 5px; */
+}
+
+footer {
+    font-family: 'Nunito', sans-serif;
+    padding: 50px 0;
+    background-color: #263647;
+}
+
+p.copyright {
+    margin: 16px 0 0;
+}
+
+.label {
+    color: white;
+    padding: 5px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    padding-left: 5px;
+    display: inline-block;
+
+}
+
+.teal {
+    background-color: #1CD6CE;
+}
+
+/* Green */
+.navy {
+    background-color: #293462;
+}
+
+/* Blue */
+.yellow {
+    background-color: #d5b62d;
+}
+
+/* Orange */
+.red {
+    background-color: #D61C4E;
+}
+
+/* Red */
+.green {
+    background-color: #C3FF99;
+    color: black;
+}
+
+/* Gray */
+
+label,
+.control-label,
+.help-block,
+.checkbox,
+.radio {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.alert-info {
+    width: 50%;
+    margin: auto;
+    color: #687430;
+    background-color: #e6ecca;
+    border-color: #aec251;
+}
+
+.panel {
+    background-color: #ffffff;
+    border: 2px solid;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.content-section {
+    padding: 70px 0;
+    /*    border-top: 1px solid #e7e7e7;*/
+}
+
+.footer,
+.push {
+    clear: both;
+    height: 4em;
+}
+
+.intro-divider {
+    width: 400px;
+    border-top: 1px solid #f8f8f8;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.intro-header {
+    padding-top: 50px;
+    padding-bottom: 390px;
+    text-align: center;
+    /* color: #f8f8f8; */
+    /* background: url(../img/background-login.jpg) no-repeat center; */
+    /* background-color: rgba(222, 250, 253, 0.781); */
+    /* background-size: cover; */
+    /* background: no-repeat center center cover; */
+    background-blend-mode: lighten;
+    background-size: 100% auto;
+    height: max-content;
+    background-repeat: no-repeat;
+}
+
+.intro-message {
+    position: relative;
+    padding-top: 20%;
+    padding-bottom: 20%;
+}
+
+.intro-message>h1 {
+    margin: 0;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+    font-size: 5em;
+}
+
+.intro-message>h3 {
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+}
+
+.lead {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.topnav {
+    font-size: 14px;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -4em;
+}
+
+.outer {
+    display: table;
+    position: absolute;
+    height: 70%;
+    width: 100%;
+}
+
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.inner {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* Custom Scrollbar styling */
+
+.scrolling-wrapper{
+    overflow-x: auto;
+    
+  }
+
+  #style-2::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+  }
+  
+  #style-2::-webkit-scrollbar
+  {
+    width: 10px;
+    background-color: #F5F5F5;
+  }
+  
+  #style-2::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #2020ff;
+  }
+  
+  /* This ligne remove the popup error in chkedit*/
+  .cke_notifications_area { display: none; }
+
+
+  /* Change dropdown menu text color to white */
+.dropdown-menu {
+    background-color: #333; /* Optional: Change background color for better contrast */
+}
+
+.dropdown-item {
+    color: white !important; /* Force white text color */
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #555; /* Optional: Change hover/focus background color */
+    color: white !important; /* Ensure text remains white on hover/focus */
+}

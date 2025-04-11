@@ -1,0 +1,37 @@
+
+{% from 'bootstrap5/form.html' import render_form %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}
+{% if new_tag %}
+ADD TAG
+{% else %}
+EDIT tag
+{% endif %}
+{% endblock %}
+{% block body %}
+<div class="content-section">
+    <br />
+
+    <div class="center">
+        <div class="card border-info">
+            <div class="card-header">
+                <strong style="font-size:25px;  font-weight: 900;">
+                    {% if new_tag %}
+                    ADD TAG
+                    {% else %}
+                    EDITER TAG
+                    {% endif %}<a href="javascript:history.back()" class="btn btn-outline-danger btn-sm float-end">CANCEL</a></strong>
+            </div>
+            <div class="card-body">
+                {{ form.csrf_token() }}
+
+                {{ render_form(form, button_style='success', button_size='block') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

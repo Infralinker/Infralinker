@@ -1,0 +1,292 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}SUPPLIER DETAILS{% endblock %}
+{% block body %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+    hr {
+        margin: 10px;
+        margin-left: auto;
+    }
+</style>
+<div class="content-section" style="margin-left: 50px; margin-right: 50px;">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    <h1 style="text-align:center;">SUPPLIER INFOS</h1>
+
+    <div class="container-fluid">
+        <div style="text-align: right;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('auth.edit_supplier', id=supplier.id) }}" class="btn btn-warning btn-sm">
+                {{ render_icon('pen') }}
+                EDIT SUPPLIER
+            </a>
+        </div>
+        <br>
+        <div class="row" style="font-family: Nunito;">
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <legend style="font-size: 25px; font-weight: 900;"> SUPPLIER DETAILS </legend>
+                        <br>
+                        <p> <strong> COMPANY NAME : </strong> <span>
+                                {{supplier.company_name}} </span> </p>
+                        <hr>
+                        <p> <strong> COMPANY ADDRESS : </strong> <span>
+                                {{supplier.address}} </span> </p>
+                        <hr>
+                        <p> <strong> CITY :</strong> <span>{{
+                                supplier.city}} </span> </p>
+                        <hr>
+                        <p> <strong> COMPANY PHONE : </strong><span>
+                                {{supplier.phone}} </span> </p>                       
+                        <hr>
+                        <p> <strong> ADD BY : </strong> <span>
+                                {{get_UserName(supplier.add_by)[0]}} {{get_UserName(supplier.add_by)[1]}} AT
+                                {{supplier.add_date}} </span> </p>
+
+
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;">LIST OF CONTACTS
+                            </legend><span>
+                                <br>
+                                <table class="table table-hover table-striped" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+                                            <th> FIRSTNAME </th>
+                                            <th> LASTNAME </th>
+                                            <th> EMAIL </th>
+                                            <th> PHONE </th>
+                                            <th> EDIT </th>
+                                            <th> DELETE </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for contact in contacts %}
+                                        <tr>
+                                            <td> {{ contact.firstname}} </td>
+                                            <td> {{ contact.lastname}} </td>
+                                            <td> {{ contact.email}} </td>
+                                            <td> {{ contact.phone}} </td>
+
+                                            <td>
+                                                <a href="{{ url_for('auth.edit_contact', id=contact.id) }}"
+                                                    class="btn btn-sm btn-primary" style="color:white;">
+                                                    {{ render_icon('pen', size='20px') }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('auth.delete_contact', id=contact.id) }}"
+                                                    class="confirmation_remove btn btn-sm btn-danger"
+                                                    style="color:white;">
+                                                    {{ render_icon('trash', size='20px') }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            </span>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <legend style="font-size: 25px;  font-weight: 900;"> TICKETS CHART </legend>
+                        <br>
+                        <div id='ChartTicketBySuuplierID' class='chart'></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+                    <div class="card-body">
+                        <legend style="font-size: 25px;  font-weight: 900;"> NOTES ABOUT COMPANY </legend>
+                        <p><span>
+                                {{supplier.notes| safe }} </span> </p>
+                    </div>
+                </div>
+
+                <div class="card border-primary mb-4">
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;">LIST OF MANAGED DEVCES
+                            </legend><span>
+                                <br>
+                                <table class="table table-hover table-striped" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+                                            <th> NAME </th>
+                                            <th> S.N </th>
+                                            <th> TYPE </th>
+                                            <th> RACK</th>
+                                            <th> SHOW</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if devices %}
+                                        {% for device in devices %}
+                                        <tr>
+                                            <td> {{ device.platform_name }} </td>
+                                            <td> {{ device.serial_number }} </td>
+                                            <td> <strong><span
+                                                        style="background-color: {{ device.device_role.device_color}};"
+                                                        class="badge">
+                                                        {{ device.device_role.name }} </span></strong>
+                                            </td>
+                                            <td>
+                                                {{ device.rack.r_name }}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.platform_details', id=device.id) }}"
+                                                    class="btn btn-sm btn-primary">{{ render_icon('eye', size='15px') }}</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {%endif%}
+                                    </tbody>
+                                </table>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px;  font-weight: 900;">LIST OF MANAGED CONTRACTS </legend>
+                            <br>
+                            <span>
+                                {% if contracts %}
+                                <table class="table table-hover table-striped" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+                                            <th> Number </th>
+                                            <th> Start Date </th>
+                                            <th> End Date </th>
+                                            <th> Status </th>
+                                            <th> SHOW </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for contract in contracts %}
+                                        <tr>
+
+                                            <td> {{ contract.contract_number }} </td>
+                                            <td> {{ contract.start_date }} </td>
+                                            <td> {{ contract.end_date }} </td>
+                                            <td>
+                                                {% if check_expiration_date(contract.end_date)==1 %}
+                                                <span class="badge bg-success"
+                                                    title=" EXPIRE IN : {{contract.end_date}}">VALID CONTRACT</span>
+                                                {% elif check_expiration_date(contract.end_date)==3 %}
+                                                <span class="badge bg-warning"
+                                                    title=" EXPIRE IN : {{contract.end_date}}">EXPIRE IN 3 MONTH</span>
+                                                {% else %}
+                                                <span class="badge bg-danger"
+                                                    title=" EXPIRE IN : {{contract.end_date}}">EXPIRED CONTRACT</span>
+                                                {% endif%}
+
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-fixed">
+                                                    <a href="{{ url_for('admin.contract_details', id=contract.id) }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        {{ render_icon('eye', size='15px') }}
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {%endif%}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px;  font-weight: 900;"> LIST OF AFFECTED TICKETS </legend>
+                            <br>
+                            <span>
+
+                                {% if tickets %}
+                                <table class="table table-hover table-striped" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+                                            <th width="10%"> N. TICKET </th>
+                                            <th width="10%"> D. OPEN </th>
+                                            <th width="10%"> DEVICE </th>
+                                            <th width="10%"> STATUS </th>
+                                            <th width="5%"> SHOW </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for ticket in tickets %}
+                                        <tr>
+                                            <td> {{ ticket.ticket_number }} </td>
+                                            <td> {{ ticket.open_date }} </td>
+                                            <td> {{ ticket.platform.platform_name }} </td>
+
+                                            <td>
+                                                {% if (ticket.status == "RESOLVED") %}
+                                                <span class="badge bg-success lb-sm">{{ ticket.status }}</span>
+                                                {% elif (ticket.status == "OPEN")%}
+                                                <span class="badge bg-warning lb-sm">{{ ticket.status }}</span>
+                                                {% else %}
+                                                <span class="badge bg-primary lb-sm">{{ ticket.status }}</span>
+                                                {%endif%}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-fixed">
+                                                    <a href="{{ url_for('auth.ticket_details', id=ticket.id) }}"
+                                                        class="btn btn-sm btn-primary" title="Show Ticket Details."
+                                                        style="color:white;">
+                                                        {{ render_icon('eye', size='15px') }}
+                                                    </a>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% endif %}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var TicktBySupplierID = {{ graphSunBurt_Tickes_by_Supplier_id | safe}};
+    Plotly.plot('ChartTicketBySuuplierID', TicktBySupplierID, {});
+</script>
+{% endblock %}

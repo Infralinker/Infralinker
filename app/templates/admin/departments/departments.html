@@ -1,0 +1,112 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}DEPARTMENT{% endblock %}
+{% block body %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section" style="margin-left: 250px; margin-right: 250px;">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;" class="mb-5">DEPARTMENTS LIST</h1>
+    <div class="container-fluid">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.new_department') }}" class="btn btn-success btn-sm">
+                {{ render_icon('building-add') }}
+                NEW DEPARTMENT
+            </a>
+
+        </div>
+        <br>
+        <br>
+        {% if departments %}
+        <table class="table table-striped table-bordered" style="font-size:16px;" aria-label="VIEW DEPARTMENTS LIST">
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="20%"> Name </th>
+                    <th width="50%"> Description </th>
+                    <th width="10%"> Employee Count </th>
+                    <th width="10%"> Servers Count </th>
+                    <th width="10%"> Ations </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in departments %}
+                <tr>
+                    <td> {{ department.name }} </td>
+                    <td> {{ department.description }} </td>
+                    <td>
+                        {% if department.admins %}
+                        {{ department.admins.count() }}
+                        {% else %}
+                        00
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if department.servers %}
+                        {{ department.servers.count() }}
+                        {% else %}
+                        00
+                        {% endif %}
+                    </td>
+                    <td>{% if current_user.is_admin%}
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.edit_department', id=department.id) }}"
+                                class="btn btn-sm btn-primary">
+                                {{ render_icon('pen', size='20px') }}
+                            </a>
+                            <a href="{{ url_for('admin.delete_department', id=department.id) }}"
+                                class="confirmation_remove btn btn-sm btn-danger">
+                                {{ render_icon('trash', size='20px') }}
+                            </a>
+                            {%else%}
+                            <a class="btn btn-sm btn-primary disabled">
+                                {{ render_icon('pen', size='20px') }}</a>
+                            <a class="btn btn-sm btn-danger disabled">
+                                {{ render_icon('trash', size='20px') }}</a>
+                        </div>
+                        {%endif%}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align: center;">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO DEPARTMENTS  ADDED YET. </h3>
+            
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('a.confirmation_remove').confirm({
+            title: "CONFIRMATION",
+            content: "Are you sure you want to delete this department ?!",
+        });
+        $('a.confirmation_remove').confirm({
+            buttons: {
+                hey: function () {
+                    location.href = this.$target.attr('href');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

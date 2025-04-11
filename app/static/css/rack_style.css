@@ -1,0 +1,168 @@
+@import url(https://fonts.googleapis.com/css?family=Nunito:100,400);
+
+body{
+  margin: 0;
+  padding: 0;
+  /* background: #eee; */
+}
+
+.box{
+  width: 370px;
+  /* height: 670px; */
+  position: static;
+  left: calc(50% - 125px);
+  top: calc(50% - 100px);
+  left: -webkit-calc(50% - 125px);
+  top: -webkit-calc(50% - 100px);
+  border: 10px solid rgb(71, 78, 76);
+  margin: 20px;
+  box-shadow: 1px 1px 0px #999,
+              2px 2px 0px #999,
+              3px 3px 0px #999,
+              4px 4px 0px #999,
+              5px 5px 0px #999,
+              6px 6px 0px #999;
+}
+
+.box span{
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  position: absolute;
+  color: white;
+  margin-left: 1px;
+}
+
+.box span:nth-child(2){
+  top: 2px;
+  left: 125px;
+}
+
+.box span:nth-child(7){
+  top: 85px;
+  left: 125px;
+}
+
+.box span:nth-child(12){
+  top: 165px;
+  left: 125px;
+}
+
+.empty_unit{
+  width: 340px;
+  background: #8f8e8e;
+  border-radius: 2px;
+  margin: 5px;
+}
+
+.empty_unit ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.server{
+  width: 340px;
+  background: #3a3a3a;
+  border-radius: 2px;
+  margin: 5px;
+}
+
+.server ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.server:first-child ul li{
+  width: 8px;
+  height: 8px;
+  float: left;
+  margin-left: 5px;
+  margin-top: 5px;
+  background: rgba(149,244,118,0.6);
+}
+
+.server ul li:first-child{
+  -webkit-animation: pattern1 0.14s linear infinite;
+}
+
+.server ul li:nth-child(2){
+  -webkit-animation: pattern1 0.14s 0.02s linear infinite;
+}
+
+.server ul li:last-child{
+  -webkit-animation: pattern1 0.14s 0.05s linear infinite;
+}
+
+@-webkit-keyframes pattern1{
+  0%{
+    background: rgba(149,244,118,0.6);
+  }
+  100%{
+    background: rgba(149,244,118,1);
+  }
+}
+
+.warning ul li{
+  width: 8px;
+  height: 8px;
+  float: left;
+  margin-left: 5px;
+  margin-top: 5px;
+  border-radius: 5px;
+  background: rgba(245, 241, 0, 0.6);
+}
+
+.warning ul li:first-child{
+  -webkit-animation: pattern2 0.14s linear infinite;
+}
+
+.warning ul li:nth-child(2){
+  -webkit-animation: pattern2 0.14s 0.02s linear infinite;
+}
+
+.warning ul li:last-child{
+  -webkit-animation: pattern2 0.14s 0.05s linear infinite;
+}
+
+@-webkit-keyframes pattern2{
+  0%{
+    background: rgba(98, 245, 0, 0.479);
+  }
+  100%{
+    background: rgb(48, 255, 21);
+  }
+}
+
+.error ul li{
+  width: 6px;
+  height: 6px;
+  float: left;
+  margin-left: 10px;
+  margin-top: 12px;
+  background: rgba(243, 241, 241, 0.6);
+}
+
+.error ul li:first-child{
+  -webkit-animation: pattern3 0.9s linear infinite;
+}
+
+.error ul li:nth-child(2){
+  -webkit-animation: pattern3 0.9s linear infinite;
+}
+
+.error ul li:last-child{
+  -webkit-animation: pattern3 0.9s linear infinite;
+}
+
+@-webkit-keyframes pattern3{
+  0%{
+    background: rgba(236,69,62,0.6);
+  }
+  80%{
+    background: rgba(236,69,62,0.6);
+  }
+  100%{
+    background: rgba(236,69,62,1);
+  }
+}

@@ -1,0 +1,77 @@
+{% from 'bootstrap5/form.html' import render_field, render_form %}
+{% from 'bootstrap5/utils.html' import render_messages, render_icon %}
+
+{% extends "base.html" %}
+{% block title %}Login to your InfraLinker Account {% endblock %}
+{% block body %}
+<link href="https://fonts.googleapis.com/css?family=Nunito:100italic,100,300italic,300,400italic,400,700italic,700,900italic,900" rel="stylesheet" type="text/css">
+
+<div class="intro-header">
+    <div class="content-section">
+        <br />           
+        {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+            <!-- ############Login Form New Format############### -->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 offset-lg-0">
+                            <div class="bg-white shadow rounded">
+                                <div class="row">
+                                    <div class="col-md-7 pe-0">
+                                        <div class="form-left h-100 py-5 px-5">
+                                            <img src="{{ url_for('static', filename='img/big-logo.png') }}" style="width:250px" class="img-responsive mb-5" alt="" />
+
+                                            {% if form.email.errors %}
+                                            <ul class="errors">{% for error in form.email.errors %}
+                                                <div class="alert alert-dismissible alert-danger">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                                    <strong>Oh snap! {{ error }}. </strong>
+                                                  </div>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            
+                                            <form action="{{url_for('auth.login')}}" class="row g-4"  method="POST">
+                                                {{ form.csrf_token }}
+                                                    <div class="col-12">
+                                                        <strong class="text-dark">E-Mail<span class="text-danger">*</span></strong>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">{{ render_icon('envelope', color='dark') }}</div>
+                                                            <input class="form-control" id="email" name="email" placeholder="EMail" required="" type="text" value="" autocomplete="off" />
+                                                            
+                                                        </div>
+                                                    </div>
+            
+                                                    <div class="col-12">
+                                                        <strong class="text-dark">Password<span class="text-danger">*</span></strong>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">{{ render_icon('key', color='dark') }}</div>
+                                                            <input type="password" class="form-control" placeholder="Password" name="password" id="password" />
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="col-12">
+                                                        <input type="submit" class="btn btn-primary px-4 float-end mt-4" value="LOGIN">
+                                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 ps-0 d-none d-md-block">
+                                        <div class="form-right h-100 bg-primary text-white text-center pt-5">
+                                            <i class="bi bi-bootstrap"></i>
+                                            <h3 style="margin-top: 70px; margin-bottom: 12px;">DATACENTER ASSETS  MANAGEMENT SOLUTION</h3><br /><br />
+                                            <h4><span>TAKE CONTROL OF YOUR DATACENTER</span></h4></div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            
+            <!-- ####################################### -->
+        </div>    
+    </div>
+
+{% endblock %}

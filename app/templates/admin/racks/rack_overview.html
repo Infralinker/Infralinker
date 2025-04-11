@@ -1,0 +1,230 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}RACK OVERVIEW{% endblock %}
+{% block body %}
+<style>
+  .well {
+    background-color: white;
+  }
+
+  hr {
+    margin: 10px;
+    margin-left: auto;
+  }
+</style>
+<link href="{{ url_for('static', filename='css/rack_style.css')}}" type="text/css" rel="stylesheet" />
+
+<div class="content-section" style="margin-left: 120px; margin-right: 120px;">
+
+  {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+  <h1 style="text-align:center;">RACK OVERVIEW</h1>
+  <br>
+  <div style="text-align: right;">
+    <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+      {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+    <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+      {{ render_icon('speedometer2') }}
+      TO DASHBOARD
+    </a>
+  </div><br>
+  <div class="container-fluid">
+    <div class="row" style="font-family: Nunito;">
+      <div class="col-lg-8">
+        <div class="card border-darck mb-4">
+          <div class="card-body">
+            <div style="margin-bottom: 25px;">
+            <strong class="card-title text-center" style="font-size: 25px;  font-weight: 900;">RACK INFORMATIONS
+              <div class="btn-group btn-group-fixed float-end">
+                <a href="{{ url_for('admin.edit_rack', id=id) }}" class="btn btn-sm btn-warning">{{ render_icon('pen')
+                  }} EDIT RACK</a>
+                <a href="{{ url_for('admin.new_platform_from_rack', id_rack=id) }}"
+                  class="btn btn-sm btn-success pull-right">{{ render_icon('plus-circle') }} ADD
+                  DEVICE</a>
+              </div>
+            </strong></div>
+            <br>
+            <strong style="font-size: 20px ;">
+              <ul>
+                <li> Name : <div style="font-size: 20px; float:right;">{{query_rack_infos.r_name.to_string(index =
+                    False, header = False)}} </div>
+                </li>
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Localisation :<div style="font-size: 20px; float:right;">
+                    {% set complet_name, color =
+                    get_cloud_provider_details(query_rack_infos.datacenter_type.to_string(index = False, header =
+                    False).strip()) %}
+                    <strong><span style="background-color: {{ color }}; font-size: 14px; " class="badge"
+                        title="{{ complet_name }} "> {{query_rack_infos.localisation.to_string(index = False, header =
+                        False)}} </span></strong>
+                  </div>
+                </li>
+
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Position (Floor / Row / Rack) :<div style="font-size: 20px; float:right;">
+                    {% set position = query_rack_infos.r_position.to_string(index = False, header = False).split('/') %}
+                    {{position[0]}} {{ render_icon('arrow-down-circle', color='dark') }}FLOOR / {{position[1]}} {{
+                    render_icon('arrow-right-circle', color='dark') }} RAW / {{position[2]}}
+                    {{ render_icon('arrow-up-circle', color='dark') }} RACK
+                  </div>
+                </li>
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Total Power Supply :<div style="font-size: 20px; float:right;">
+                    {{query_rack_infos.total_power.to_string(index = False, header = False)|int}} Watts </div>
+                </li>
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Consumed Units : <div style="font-size: 20px; float:right;">
+                    {{query_rack_infos.used_units.to_string(index = False, header = False)|int}}</div>
+                </li>
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Availabale Units : <div style="font-size: 20px; float:right;">
+                    {{query_rack_infos.free_units.to_string(index = False, header = False)|int}}</div>
+                </li>
+                <hr style="margin: 6px 0 6px 0;">
+                <li> Total Installed Devices :<div style="font-size: 20px; float:right;">
+                    {{query_rack_infos.total_platform.to_string(index = False, header = False)}} </div>
+                </li>
+              </ul>
+            </strong>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <strong class="card-title text-center" style="font-size: 25px;  font-weight: 900;"> NOTES </strong>
+            <div style="font-size: 18px ;">
+              <p> {{ query_rack_infos.r_notes.str.replace('\r\n', '').str.replace('\t', '').to_string(index = False, header = False)|safe}} </p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <strong class="card-title text-center" style="font-size: 25px;  font-weight: 900;">TAGS</strong><br>
+            <div style="font-size: 18px ;">
+              {% for tag in query_rack_infos.tags.to_string(index = False, header = False|safe).rsplit(",") %}
+              <strong><span style="background-color: {{ get_tag_color(tag.strip()) }};" class="badge">
+                  {{ render_icon('tag') }} {{tag}} </span>
+              </strong>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        {% if not query_is_empty %}
+        <div class="box">
+          {% for name, start, end, units in rows|sort(attribute='start', reverse = True) %}
+          {% if name == 'empty' %}
+          <div class="empty_unit" style="height: {{units * 23}}px;">
+            <li><span style="text-align: center; font-size: 14px;"> {{ name }} space from {{start}} to {{end}}</span>
+            </li>
+            {% else %}
+            <div class="server warning" style="height: {{units * 23}}px;">
+              <ul>
+                <li></li>
+                <li></li>
+                &emsp;<a href="#"><span> {{ name }} [ {{start}} - {{end}} ] {{ render_icon('arrow-right-circle-fill', color='white', size="12") }}</span></a>
+              </ul>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <h3> NO DEVICES ADDED YET TO THIS RACK. </h3>
+      </div>
+    </div>
+ 
+  {%endif%}
+
+<div class="row mb-4" style="font-family: Nunito;">
+  <div class="card border-darck">
+    <div class="card-body">
+      <strong class="card-title text-center" style="font-size: 25px;  font-weight: 900;"> DEVICES LIST </strong><br>
+      <table id="bootstrap-table" class="table table-striped" style="font-size:14px;">
+        <thead class="table-info" style=" text-transform: uppercase;">
+          <tr>
+            <th width="1%">#ID</th>
+            <th width="15%"> Name </th>
+            <th width="10%"> serial number </th>
+            <th width="9%"> Units Position </th>
+            <th width="10%"> CONSUMD Units </th>
+            <th width="10%"> Device Type </th>
+            <th width="10%"> warranty status </th>
+            <th width="10%"> Contract Status </th>            
+            <th width="15%"> Action </th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for platform in platforms %}
+          <tr>
+            <th> {{ platform.id }} </th>
+            <td> {{ platform.platform_name }} </td>
+            <td> {{ platform.serial_number }} </td>
+            <td> [ {{ platform.u_position }} ] </td>
+            <td> {{ platform.u_hight }} </td>
+            <td> <strong><span style="background-color: {{ platform.device_role.device_color}};" class="badge"> {{
+                  platform.device_role.name }} </span></strong></td>
+
+            <td>
+              {% if platform.end_warranty_date %}
+              {% if check_expiration_date(platform.end_warranty_date)==1 %}
+              <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">IN WARRANTY</span>
+              {% elif check_expiration_date(platform.end_warranty_date)==3 %}
+              <span class="badge bg-warning" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE IN 3
+                MONTH</span>
+              {% else %}
+              <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">OUT WARRANTY</span>
+              {% endif%} </span>
+              {% else %}
+              <span class="badge bg-info">NO WARRANTY</span>
+              {% endif%}
+            </td>
+            <td>
+              {% if platform.contract.end_date %}
+              {% if check_expiration_date(platform.contract.end_date)==1 %}
+              <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">VALID CONTRACT</span>
+              {% elif check_expiration_date(platform.contract.end_date)==3 %}
+              <span class="badge bg-warning" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE IN 3
+                MONTH</span>
+              {% else %}
+              <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRED CONTRACT</span>
+              {% endif%}
+              {% else %}<span class="badge bg-info">NO CONTRACT</span>
+              {% endif%}
+            </td>
+            {% if current_user.is_admin or current_user.control_platforms %}
+            <td>
+              <div class="btn-group btn-group-fixed">
+                <a href="{{ url_for('admin.platform_details', id=platform.id) }}" class="btn btn-sm btn-info">
+                  {{ render_icon('eye', size='20px') }}</a>
+                <a href="{{ url_for('admin.edit_platform', id=platform.id) }}" class="btn btn-sm btn-primary">
+                  {{ render_icon('pen', size='20px') }}</a>
+                <a href="{{ url_for('admin.delete_platform', id=platform.id) }}"
+                  class="confirmation_remove btn btn-sm btn-danger">{{ render_icon('trash', size='20px') }}</a>
+              </div>
+            </td>
+            {% else %}
+            <td>
+              <div class="btn-group btn-group-fixed">
+                <a href="{{ url_for('admin.platform_details', id=platform.id) }}" class="btn btn-sm btn-info">{{ render_icon('eye', size='20px') }}</a>
+                <a class="btn btn-sm btn-primary disabled">{{ render_icon('pen', size='20px') }}</a>
+                <a class="btn btn-sm btn-danger disabled">{{ render_icon('trash', size='20px') }}</a>
+              </div>
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

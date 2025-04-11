@@ -1,0 +1,16 @@
+[Unit]
+Description=uWSGI instance to serve InfraLinker Service
+After=network.target
+
+[Service]
+User=infralinker
+Group=infralinker
+WorkingDirectory=/home/infralinker/infralinker
+Environment="PATH=/home/infralinker/infralinker_venv/bin"
+Environment="FLASK_APP=/home/infralinker/infralinker/run.py"
+Environment="FLASK_CONFIG=development"
+Environment="PYTHONDONTWRITEBYTECODE=abc"
+ExecStart=/home/infralinker/infralinker_venv/bin/uwsgi --workers 5 --threads 20 --ini production.ini
+
+[Install]
+WantedBy=multi-user.target

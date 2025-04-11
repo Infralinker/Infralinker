@@ -1,0 +1,468 @@
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block body %}
+
+<style>
+  img {
+    -webkit-filter: drop-shadow(5px 5px 5px #222);
+    filter: drop-shadow(1px 1px 1px #222);
+  }
+  
+</style>
+<!-- <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script> -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<div class="content-section" style="margin-left: 20px; margin-right: 20px;">
+  <div class="container-fluid">
+    <!-- #########First Section########## -->
+    <div class="scrolling-wrapper row flex-row flex-nowrap mb-4" style="font-family: Nunito;" id="style-2">
+      {% for datacenter in datacenters %}
+      <div class="col-lg-4">
+        <div class="card border-dark mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-5">
+                {% if datacenter.dc_type == 'ON-PREMISE' %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/on-premise.png') }}" alt="DataCenter"
+                  style="height: 80px;" />
+                {% elif datacenter.dc_type == 'OTHER' %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/other-cloud.png') }}" alt="DataCenter"
+                  style="height:80px" />
+                {% else %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/' + datacenter.dc_type.lower() + '.png') }}"
+                  alt="DataCenter" style="height:80px" />
+                {% endif %}
+
+                {% if current_user.is_admin or current_user.is_manager or current_user %}
+                <br><br> <strong>
+                  {{ render_icon('crosshair', color='primary', size = "20px") }} - <a href="{{ url_for('home.infos_datacenters', id_datacenter=datacenter.id) }}" class="text-warning stretched-link">{{datacenter.dc_name}}
+                    </a></strong><br>
+                {% else %}
+                <br><br>
+                <strong>{{datacenter.dc_name}}</strong><br>
+                {% endif %}
+
+                {{ render_icon('geo-fill', color='primary', size = "20px") }} - {{datacenter.dc_city}}<br>
+
+                {% if datacenter.dc_type == 'ON-PREMISE' %}
+                <strong><span style="background-color: #616161; font-size: 14px; " class="badge"> ON-PREMISE
+                  </span></strong>
+                {% else %}
+                {% set complet_name, color = get_cloud_provider_details(datacenter.dc_type) %}
+                <strong><span style="background-color: {{ color }}; font-size: 14px; " class="badge"> {{ complet_name }}
+                  </span></strong>
+                {% endif %}
+              </div>
+
+              <div class="col-lg-7">
+                <ul class="list-group">
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_ticket_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_ticket_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Open Tickets </strong>
+                  </li>
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_ip_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_ip_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Distributed IP</strong>
+                  </li>
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_rack_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_rack_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Installed Racks</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+    <!-- ####Second Section ##### -->
+    <div class="row mb-3" style="font-family: Nunito; font-weight: 900;">
+      <!-- Panel 1 -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-primary">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-3">
+                {{ render_icon('rocket-takeoff-fill', size="75px") }}
+              </div>
+              <div class="col-9 text-end">
+                <div style="font-size: 40px;">{{ query_open_projects().to_string(index=False, header=False) }}</div>
+                <div>Open Projects!</div>
+              </div>
+            </div>
+          </div>
+          <a href="{{ url_for('admin.list_projects', id=current_user.id) }}" class="text-decoration-none">
+            <div class="card-footer bg-light">
+              <span class="float-start"><strong>View Details</strong></span>
+              <span class="float-end">{{ render_icon('arrow-right-circle-fill', color='primary') }} </span>
+              <div class="clearfix"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Panel 2 -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-success">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-3">
+                {{ render_icon('diagram-3', size="75px") }}
+              </div>
+              <div class="col-9 text-end">
+                <div style="font-size: 40px;">
+                  {{ query_total_all_networks().to_string(index=False, header=False) }} / {{
+                  query_total_all_servers().to_string(index=False, header=False) }}
+                </div>
+                <div>Used Network / IP!</div>
+              </div>
+            </div>
+          </div>
+          <a href="{{ url_for('admin.list_networks') }}" class="text-decoration-none">
+            <div class="card-footer bg-light">
+              <span class="float-start"><strong>View Details</strong></span>
+              <span class="float-end">{{ render_icon('arrow-right-circle-fill', color='primary') }} </span>
+              <div class="clearfix"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Panel 3 -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-warning">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-3">
+                {{ render_icon('bug-fill', size="75px") }}
+              </div>
+              <div class="col-9 text-end">
+                <div style="font-size: 40px;">{{ query_open_vulnerabilities().to_string(index=False, header=False) }}
+                </div>
+                <div>Unpatched Vulnerabilities!</div>
+              </div>
+            </div>
+          </div>
+          <a href="{{ url_for('admin.list_vulnerabilities') }}" class="text-decoration-none">
+            <div class="card-footer bg-light">
+              <span class="float-start"><strong>View Details</strong></span>
+              <span class="float-end">{{ render_icon('arrow-right-circle-fill', color = "primary" ) }} </span>
+              <div class="clearfix"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Panel 4 -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card text-white bg-danger">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-3">
+                {{ render_icon('bandaid-fill', size="75px") }}
+              </div>
+              <div class="col-9 text-end">
+                <div style="font-size: 40px;">{{ query_open_tickets().to_string(index=False, header=False) }}</div>
+                <div>Open Tickets!</div>
+              </div>
+            </div>
+          </div>
+          <a href="{{ url_for('auth.list_tickets') }}" class="text-decoration-none">
+            <div class="card-footer bg-light">
+              <span class="float-start"><strong>View Details</strong></span>
+              <span class="float-end">{{ render_icon('arrow-right-circle-fill', color='primary') }} </span>
+              <div class="clearfix"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ################TICKET OVERVIEW############### -->
+    <div class="row mb-3">
+      <div class="col-8">
+        <div class="card border-primary" style="height: 35rem;">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6">
+                <h3 class="card-title text-center"> LAST OPEN TICKETS</h3><br>
+                <table class="table table-striped">
+                  <thead class="table-info" style="text-transform: uppercase;" style="font-size: 14px;">
+                    <tr>
+                      <th> Tickets N° </th>
+                      <th> Open Date </th>
+                      <th> priority </th>
+                      <th> Show </th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ticket in last_open_tickets %}
+                    <tr>
+                      <td>{{ticket.ticket_number }} </td>
+                      <td>{{ticket.open_date }} </td>
+                      <td>{% if ticket.priority == 'HIGH' %}
+                        <span class="badge bg-danger lb-lg">HIGH</span>
+                        {% elif ticket.priority == 'AVERAGE' %}
+                        <span class="badge bg-warning lb-lg">AVERAGE</span>
+                        {% else %}
+                        <span class="badge bg-info lb-lg">LOW</span>
+                        {% endif %}
+                      </td>
+                      <td style="text-align: center;">
+                        <a href="{{ url_for('auth.ticket_details', id=ticket.id) }}" class="badge bg-success">
+                          {{ render_icon('eye-fill', size="18px") }}</a>
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <div class="dropdown float-end">
+                  <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                    <strong> ---- ACTIONS ---- </strong>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{ url_for('auth.tickets_repport', ticket_status='OPEN') }}">Show
+                        Open Tickets</a></li>
+                    <li><a class="dropdown-item"
+                        href="{{ url_for('auth.tickets_repport', ticket_status='RESOLVED') }}">Show Rosolved Tickets</a>
+                    </li>
+                    <li><a class="dropdown-item" href="{{ url_for('auth.list_tickets') }}">List all Tickets</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+
+              <div class="col-6">
+                <h3 class="card-title text-center"> TICKETS OVERVIEW </h3><br>
+                <div id='chartStatusGraph' class='chart'></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-primary" style="height: 35rem;">
+                            <div class=" card-body">
+          <h3 class="card-title text-center"> OPEN TICKETS BY SUPPLIER</h3>
+          <div id='chartSuppliersGraph' class='chart'></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ################NETWORK OVERVIEW############### -->
+  <div class="row mb-3">
+    <div class="col-lg-8">
+      <div class="card border-warning">
+        <div class="card-body">
+          <h3 class="card-title text-center">NETWORKS AND IP's OVERVIEW</h3>
+          <div class="row">
+            <div class="col-lg-6">
+              <div id='NetworkChart' class='chart'></div>
+            </div>
+
+            <div class="col-lg-6">
+              <div id='IPChart' class='chart'></div>
+            </div>
+          </div>
+
+          <div class="dropdown float-end">
+            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <strong> ---- ACTIONS ---- </strong>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('admin.list_networks') }}">Show liste of Networks</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin.list_servers') }}">Show liste of Servers</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-warning">
+        <div class="card-body">
+          <h3 class="card-title text-center">MAINTENANCE CONTRACTS</h3>
+          <div id='ContractChart' class='chart'></div>
+
+          <div class="float-end">
+            <a href="{{ url_for('admin.list_contracts') }}" class="btn btn-success btn-sm">
+              <strong>VIEW ALL CONTRACTS</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- ################VULNERABILITIES OVERVIEW############### -->
+
+  <div class="row mb-3">
+    <div class="col-lg-12">
+      <div class="card border-danger">
+        <div class="card-body">
+          <h3 class="card-title text-center">VULNERABILITIES OVERVIEW</h3>
+          <div class="row">
+            <div class="col-lg-4">
+              <div id='chartStatVulnerabilityGraph' class='chart'></div>
+            </div>
+            <div class="col-lg-4">
+              <div id='OpenVulnerabiliyDCChart' class='chart'></div>
+            </div>
+            <div class="col-lg-4">
+
+              <h3 class="card-title text-center"> LAST ADDED VULNERABILITIES</h3><br><br>
+              <table class="table  table-striped">
+                <thead class="table-info" style="text-transform: uppercase;" style="font-size: 14px;">
+                  <tr>
+                    <th> TITLE </th>
+                    <th> DATE </th>
+                    <th> EVALUATION </th>
+                    <th> STATUS </th>
+                    <th> SHOW </th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for open_vul in last_open_vulnerabilities %}
+                  <tr>
+                    <td>{{open_vul.title_vulnerability }} </td>
+                    <td>{{open_vul.date_vulnerability }} </td>
+                    <td>
+                      {% if (open_vul.gravity == "HIGH") and (open_vul.criticity == "HIGH") %}
+                      <span class="badge bg-danger lb-lg">URGENT</span>
+                      {% elif (open_vul.gravity == "AVERAGE") or (open_vul.criticity ==
+                      "AVERAGE") %}
+                      <span class="badge bg-warning lb-lg">MAXIMUM</span>
+                      {% else %}
+                      <span class="badge bg-primary lb-lg">MINIMUM</span>
+                      {% endif %}
+                    </td>
+                    <td> {% if open_vul.ticket.status == "OPEN" %}
+                      <span class="badge bg-danger lb-lg">OPEN</span>
+                      {%else%}
+                      <span class="badge bg-success lb-lg">RESOLVED</span>
+                      {%endif%}
+                    </td>
+                    <td style="text-align: center;">
+                      <a href="{{ url_for('admin.vulnerability_repport', id=open_vul.id) }}" class="badge bg-success">
+                        {{ render_icon('eye-fill', size="18px") }} </a>
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="float-end">
+            <a href="{{ url_for('admin.list_vulnerabilities') }}" class="btn btn-success btn-sm">
+              <strong> SHOW ALL VULNERABILITES </strong></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-lg-8">
+      <div class="card border-info">
+        <div class="card-body">
+          <h3 class="card-title text-center">RACKS OVERVIEW</h3>
+          <div id='chartBarChart' class='chart'></div>
+
+          <div class="dropdown float-end">
+            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+              <strong> ---- ACTIONS ---- </strong>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('admin.list_racks') }}">Show liste of Racks</a>
+              <li><a class="dropdown-item" href="#">Show ALL</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-info">
+        <div class="card-body">
+          <h3 class="card-title text-center">DEVICES WARRANTY</h3>
+          <div id='WarrantyChart' class='chart'></div>
+          <div class="float-end">
+            <a href="{{ url_for('admin.list_platforms') }}" class="btn btn-success btn-sm">
+              <strong> VIEW ALL DEVICES </strong>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- ################################# -->
+</div>
+</div>
+
+</div>
+</div>
+
+<script type='text/javascript'>
+  var TicketsSatusGraph = {{ graphTicketsStatus | safe}};
+  Plotly.plot('chartStatusGraph', TicketsSatusGraph, {});
+
+  var OpenVulnerabilityDCGraph = {{ graphOpenVulnerabilitiesDC | safe}};
+  Plotly.plot('OpenVulnerabiliyDCChart', OpenVulnerabilityDCGraph, {});
+
+  var StatusVulnerabilitiesGraph = {{ graphStatusVulnerabilities | safe}};
+  Plotly.plot('chartStatVulnerabilityGraph', StatusVulnerabilitiesGraph, {});
+
+  var TicketsSupplierGraph = {{ graphSunBurt_Tickes_by_Suppliers | safe}};
+  Plotly.plot('chartSuppliersGraph', TicketsSupplierGraph, {});
+
+  var NetworkDataCenteGraph = {{ graphNetworkDataCenter | safe}};
+  Plotly.plot('NetworkChart', NetworkDataCenteGraph, {});
+
+  var IPDataCenterGraph = {{ graphIPDataCenter | safe}};
+  Plotly.plot('IPChart', IPDataCenterGraph, {});
+
+  var GraphBarChart = {{ graphBar_racks_by_dc | safe}};
+  Plotly.plot('chartBarChart', GraphBarChart, {});
+
+  var GraphWarrantyChart = {{ graphWarrantyPlatform | safe}};
+  Plotly.plot('WarrantyChart', GraphWarrantyChart, {});
+
+  var graphContractStatus = {{ graphContractStatus | safe}};
+  Plotly.plot('ContractChart', graphContractStatus, {});
+
+</script>
+{% endblock %}

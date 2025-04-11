@@ -1,0 +1,361 @@
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block body %}
+<style>
+  /*img {
+    -webkit-filter: drop-shadow(5px 5px 5px #222);
+    filter: drop-shadow(1px 1px 1px #222);
+  }*/
+
+  .card-counter {
+    box-shadow: 2px 2px 10px #DADADA;
+    margin: 5px;
+    padding: 20px 10px;
+    background-color: #fff;
+
+    border-radius: 5px;
+    transition: .3s linear all;
+  }
+
+  .card-counter:hover {
+    box-shadow: 4px 4px 20px #DADADA;
+    transition: .3s linear all;
+  }
+
+  .card-counter.primary {
+    background-color: #007bff;
+    color: #FFF;
+  }
+
+  .card-counter.danger {
+    background-color: #ef5350;
+    color: #FFF;
+  }
+
+  .card-counter.success {
+    background-color: #66bb6a;
+    color: #FFF;
+  }
+
+  .card-counter.info {
+    background-color: #26c6da;
+    color: #FFF;
+  }
+
+  .card-counter.warning {
+    background-color: #ff9131;
+    color: #FFF;
+  }
+
+
+  .card-counter i {
+    font-size: 5em;
+    opacity: 0.2;
+  }
+
+  .card-counter .count-numbers {
+    font-size: 32px;
+    display: inline;
+  }
+
+  .card-counter .count-name {
+    font-style: normal;
+    text-transform: uppercase;
+    opacity: 0.5;
+    display: inline;
+    font-size: 18px;
+  }
+  
+</style>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<div class="content-section" style="margin-left: 10px; margin-right: 10px;">
+  <div class="container-fluid">
+    <!-- #########First Section########## -->
+
+    <div class="scrolling-wrapper row flex-row flex-nowrap mb-4" style="font-family: Nunito;" id="style-2">
+      {% for datacenter in datacenters %}
+      <div class="col-4">
+        <div class="card border-dark mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-5">
+                {% if datacenter.dc_type == 'ON-PREMISE' %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/on-premise.png') }}" alt="DataCenter"
+                  style="height: 70px;" />
+                {% elif datacenter.dc_type == 'OTHER' %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/other-cloud.png') }}" alt="DataCenter"
+                  style="height:70px" />
+                {% else %}
+                <img src="{{ url_for('static', filename='img/cloud-icons/' + datacenter.dc_type.lower() + '.png') }}"
+                  alt="DataCenter" style="height:70px" />
+                {% endif %}
+
+                {% if current_user.is_admin or current_user.is_manager or current_user %}
+                <br><br> <strong style="font-size: 16px;"> {{ render_icon('crosshair', color='primary', size = "20px") }} - <a
+                    href="{{ url_for('home.infos_datacenters', id_datacenter=datacenter.id) }}">{{datacenter.dc_name}}
+                    </a></strong><br>
+                {% else %}
+                <br><br>
+                <strong>{{datacenter.dc_name}}</strong><br>
+                {% endif %}
+
+                {{ render_icon('geo-fill', color='primary', size = "20px") }} - {{datacenter.dc_city}}<br>
+              </div>
+
+              <div class="col-lg-7">
+                <ul class="list-group mb-3">
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_ticket_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_ticket_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Open Tickets </strong>
+                  </li>
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_ip_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_ip_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Distributed IP</strong>
+                  </li>
+                  <li class="list-group-item list-group-item-action  d-flex justify-content-between align-items-center"
+                    style="margin: 0px;">
+                    <span class="badge bg-primary rounded-pill">
+                      {% if query_count_rack_dc(datacenter.id).empty %}
+                      0
+                      {% else %}
+                      {{query_count_rack_dc(datacenter.id).to_string(index=False, header=False)}}
+                      {% endif %}
+                    </span>
+                    <strong>Installed Racks</strong>
+                  </li>
+                </ul>
+                {% if datacenter.dc_type == 'ON-PREMISE' %}
+                <strong><span style="background-color: #616161; font-size: 14px; " class="badge"> ON-PREMISE
+                  </span></strong>
+                {% else %}
+                {% set complet_name, color = get_cloud_provider_details(datacenter.dc_type) %}
+                <strong><span style="background-color: {{ color }}; font-size: 14px; " class="badge"> {{ complet_name }}
+                  </span></strong>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+    <br />
+    <!-- ###############CARDS COUNER SECTION###################"" -->
+    
+    <div class="row mb-5" style="font-family: Nunito;">
+
+      <div class="col-5">
+        <div class="card-counter warning h-100" style="border-radius: 5px;">
+          <div class="card-body">
+            <br>
+            <div class="row">
+              <div class="col-4 mt-5">
+                <img class="rounded"
+                  src="{{ url_for('static', filename='img/cloud-icons/' + datacenter_name.dc_type.lower() + '.png') }}"
+                  alt="DataCenter" style="height:100px; display: inline ; opacity: 0.5;" />
+              </div>
+              <div class="col-lg-8">
+                {% set complet_name, color = get_cloud_provider_details(datacenter_name.dc_type) %}
+                <strong class="card-sub-title" style="margin-bottom: .25rem; font-size: 26px;">{{ complet_name }}</strong><br /><br />
+                <strong class="card-title" style="margin-bottom: .25rem; font-size: 28px;"><span
+                    title="{{ complet_name }}" style="background-color: {{ color }}; font-size: 14px; " class="badge" > {{datacenter_name.dc_name}} </span></strong><br />
+                <strong>
+                  <div class="count-name"> TYPE : {{ datacenter_name.dc_type}} </div>
+                </strong><br />
+                <strong>
+                  <div class="count-name"> PHONE : {{ datacenter_name.dc_phone}} </div>
+                </strong><br />
+                <strong>
+                  <div class="count-name"> ADRRESS : {{ datacenter_name.dc_address}} </div>
+                </strong><br />
+                <strong>
+                  <div class="count-name"> CITY : {{ datacenter_name.dc_city}} </div>
+                </strong><br />
+                <strong>
+                  <div class="count-name"> COUNTRY : {{ datacenter_name.dc_country}} </div>
+                </strong>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-7">
+        <div class="row" style="font-family: Nunito;">
+          <div class="col-md-6">
+            <div class="card-counter primary">
+              <div class="row">
+                <strong style="font-size: 22px; font-family: Nunito;" class="card-title mb-2"> NETWORKS & IP'S </strong>
+                <div class="col-3">
+                  <img src="{{ url_for('static', filename='img/noun_networks.png') }}" alt="NETWORKS"
+                    style="width:90px;margin-bottom: 10px; align-items: center; opacity: 0.2;" />
+                </div>
+                <div class="col-9" style="text-align: right;">
+                  <p style="margin-bottom: -1rem;"><strong class="count-name"> VLAN'S / NETWORKS </strong> - <strong
+                      class="count-numbers">{{count_network_dc | int}}</strong></p>
+                  <strong class="count-name"> USED IP </strong> - <strong class="count-numbers">{{count_ip_dc | int }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card-counter danger">
+              <div class="row">
+                <strong style="font-size: 22px; font-family: Nunito;" class="card-title mb-2"> RACKS & UNITS </strong>
+                <div class="col-3">
+                  <img src="{{ url_for('static', filename='img/noun_racks.png') }}" alt="NETWORKS"
+                    style="width:90px;margin-bottom: 10px; align-items: center; opacity: 0.2;" />
+                </div>
+                <div class="col-9" style="text-align: right;">
+                  <p style="margin-bottom: -1rem;"><strong class="count-name"> RACKS </strong> - <strong
+                      class="count-numbers">{{count_rack_dc | int}}</strong></p>
+                  <strong class="count-name"> USED UNITS </strong> - <strong class="count-numbers">{{count_u_dc |
+                    int}}</strong>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card-counter success">
+              <div class="row">
+                <strong style="font-size: 22px; font-family: Nunito;" class="card-title mb-2"> VULNERABILITIES & TICKETS
+                </strong>
+                <div class="col-3">
+                  <img src="{{ url_for('static', filename='img/noun_vulnerabilities.png') }}" alt="NETWORKS"
+                    style="width:90px;margin-bottom: 10px; align-items: center; opacity: 0.2;" />
+                </div>
+                <div class="col-9" style="text-align: right;">
+                  <p style="margin-bottom: -1rem;"><strong class="count-name"> OPEN TICKETS </strong> - <strong
+                      class="count-numbers">{{count_ticket_dc | int}}</strong></p>
+                  <strong class="count-name"> OPEN VULNERABILITES </strong> - <strong
+                    class="count-numbers">{{count_vul_by_dc | int }} </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card-counter info">
+              <div class="row">
+                <strong style="font-size: 22px; font-family: Nunito;" class="card-title mb-2"> PROJECTS </strong>
+                <div class="col-3">
+                  <img src="{{ url_for('static', filename='img/noun_projects.png') }}" alt="NETWORKS"
+                    style="width:90px;margin-bottom: 10px; align-items: center; opacity: 0.2;" />
+                </div>
+                <div class="col-9" style="text-align: right;">
+                  <p style="margin-bottom: -1rem;"><strong class="count-name"> OPEN PROJECTS </strong> - <strong
+                      class="count-numbers">{{count_open_project | int}}</strong></p>
+                  <strong class="count-name"> COMPLETED PROJECTS </strong> - <strong
+                    class="count-numbers">{{count_close_project | int }} </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# HER WE MUST PUT THE OTHER CHART OF PROJECT #}
+    <div class="row mb-5">
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">TOP 10 USED NETWORKS</h3>
+            <div id='chartTopUsedVlanGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">IP TYPE</h3>
+            <div id='chartServerTypebyDCGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">IP VITALITY OVERVIEW</h3>
+            <div id='chartVitalityServerGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {#########################################}
+    <div class="row mb-5">
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">TICKETS OVERVIEW</h3>
+            <div id='chartTicketsStatusGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">VULNERABILITES OVERVIEW
+            </h3>
+            <div id='chartVulnerabilitiesByDCGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-info">
+          <div class="card-body">
+            <h3 class="card-title text-center" style="filter: drop-shadow(3px 3px 3px #222);">DEVICES TYPE OVERVIEW</h3>
+            <div id='chartDeviceRoleUsedGraph' class='chart'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type='text/javascript'>
+  var TicketsSatusGraph = {{ graphCountTicktStatusByDC | safe}};
+  Plotly.plot('chartTicketsStatusGraph', TicketsSatusGraph, {});
+
+  var TopUsedVLANGraph = {{ graphTopUsedVLANByDC | safe}};
+  Plotly.plot('chartTopUsedVlanGraph', TopUsedVLANGraph, {});
+
+  var VitalityServerGraph = {{ graphVitalityServerByDC | safe}};
+  Plotly.plot('chartVitalityServerGraph', VitalityServerGraph, {});
+
+  var DeviceRoleUsedGraph = {{ graphDeviceRoleUsedByDC | safe}};
+  Plotly.plot('chartDeviceRoleUsedGraph', DeviceRoleUsedGraph, {});
+
+  var VulnerabilitiesByDCGraph = {{ graphVulnerabilitiesByDC | safe}};
+  Plotly.plot('chartVulnerabilitiesByDCGraph', VulnerabilitiesByDCGraph, {});
+
+  var ServerTypebyDCGraph = {{ graphBar_server_type_by_dc | safe}};
+  Plotly.plot('chartServerTypebyDCGraph', ServerTypebyDCGraph, {});
+</script>
+</html>
+{% endblock %}
