@@ -1,0 +1,114 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}TAGS LIST{% endblock %}
+{% block body %}
+
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;" class="mb-5"> TAGS LIST </i></h1>
+
+    <div class="container">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('auth.new_tag') }}" class="btn btn-success btn-sm">
+                {{ render_icon('tag') }}
+                ADD NEW TAG
+            </a>
+        </div><br>
+        {% if tags %}
+        <table data-toggle="table" data-search="true" data-show-columns="true" data-pagination="true"
+            data-buttons-class="info" class="table table-striped mb-5" aria-label="VIEW  ALL TAGS">
+
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="3%">#ID</th>
+                    <th width="10%"> TAG NAME </th>
+                    <th width="50%"> DESCRIPTION </th>
+                    <th width="10%"> COLOR </th>
+                    <th width="20%"> ADD BY </th>
+                    <th width="5%"> ACTIONS </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <th><strong> {{ tag.id}} </strong></th>
+                    <td> {{ tag.tag_name}} </td>
+                    <td> {{ tag.tag_description}} </td>
+                    <td><strong><span style="background-color: {{ tag.tag_color}};" class="badge">{{ render_icon('tag',
+                                size='15px') }} {{ tag.tag_name }} </span></strong> </td>
+                    <td> {{get_UserName(tag.add_by)[0]}} {{get_UserName(tag.add_by)[1]}} </td>
+                    <td>
+                        {% if current_user.id == tag.add_by or current_user.is_admin %}
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('auth.edit_tag', id=tag.id) }}" title="Edit Tag!"
+                                class="btn btn-sm btn-primary">
+                                {{ render_icon('pen', size='20px') }}
+                            </a>
+                            <a href="{{ url_for('auth.delete_tag', id=tag.id) }}" title="Remove tag from Database."
+                                class="confirmation_delete btn btn-sm btn-danger">
+                                {{ render_icon('trash', size='20px') }}
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="btn-group btn-group-fixed">
+                            <a href="#" title="Edit Tag!" class="btn btn-sm btn-primary disabled">
+                                {{ render_icon('pen', size='20px') }}
+                            </a>
+                            <a href="#" title="Remove tag from Database." class="btn btn-sm btn-danger disabled">
+                                {{ render_icon('trash', size='20px') }}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align: center">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO TAG ADD YET. </h3>
+            
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('a.confirmation_delete').confirm({
+            title: "CONFIRMATION",
+            content: "Are you sure you want to delete this tag ?!",
+        });
+        $('a.confirmation_delete').confirm({
+            buttons: {
+                hey: function () {
+                    location.href = this.$target.attr('href');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

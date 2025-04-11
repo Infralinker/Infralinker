@@ -1,0 +1,96 @@
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Import data from csv{% endblock %}
+{% block body %}
+<div class="content-section">
+   
+   {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+   
+   <div class="container">
+      <h3>IMPORT YOUR NETWORKS CSV DATA :</h3>
+      <hr>
+      <strong style="color : grey;">Please input the column headers first, followed by a line for each record you wish to import. Use semicolons (;) to separate values. You can include multiple data and values separated by commas within the tags list. To import massive data, please follow the same format. Alternatively, you have the option to download a CSV Example file for importing the networks list  "<a href="{{ url_for('static', filename='downloads/networks_template.csv') }}">networks_template.csv</a>".</strong>
+      <br />
+      <br />
+      <strong>COLUMN HEADER :</strong><br>
+      net_name; tag; mask; gatway; net_notes; tags ; add_by; add_date; datacenter_id
+      <br />
+
+      <br />
+      {{ render_form(form, button_style='primary', button_size='block') }}
+
+      <br />
+      <div class="row" style="font-family: Nunito;">
+         <div class="col-lg-12">            
+                  <h2>CSV Field Options</h2>
+                  <hr>
+                  <table class="table table-striped" style="font-size:16px;">
+                     <thead class="table-info" style=" text-transform: uppercase;" style="font-size: 14px;">
+                        <tr>
+                           <th>Filed Name</th>
+                           <th>Required</th>
+                           <th>Description</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td> net_name</td>
+                           <td> YES</td>
+                           <td> Network OR VLAN Name</td>
+                        </tr>
+                        <tr>
+                           <td> tag</td>
+                           <td> YES </td>
+                           <td> Networl OR VLAN Tag </td>
+                        </tr>
+                        <tr>
+                           <td> mask</td>
+                           <td> YES </td>
+                           <td> Network OR VLAN Mask </td>
+                        </tr>
+                        <tr>
+                           <td> gatway</td>
+                           <td> YES </td>
+                           <td> Networ OR VLAN Gatway </td>
+                        </tr>
+                        <tr>
+                           <td> net_notes</td>
+                           <td> --- </td>
+                           <td> Notes / Comments</td>
+                        </tr>
+                        <tr>
+                           <td> tags</td>
+                           <td> --- </td>
+                           <td> Tags Liste must be from list of tags <a href="{{ url_for('auth.tags_list') }}"> [Show
+                                 List]</a>, multiple tags with comma delimited are accepted EX: (TAG1, TAG2, TAG3) </td>
+                        </tr>
+                        <tr>
+                           <td> datacenter_id</td>
+                           <td> --- </td>
+                           <td> Assigned DataCenter, Select ID of DataCenter from List. <a
+                                 href="{{ url_for('admin.list_datacenters') }}"> [Show List] </td>
+                        </tr>
+                        <tr>
+                           <td> add_by</td>
+                           <td> --- </td>
+                           <td> Assigned User, Select ID of User from List. <a
+                                 href="{{ url_for('admin.list_admins') }}"> [Show List]</a></td>
+                        </tr>
+                        <tr>
+                           <td> add_date</td>
+                           <td> --- </td>
+                           <td> Add Date time with format YYYY-MM-DD HH:MM:SS Ex : [ 2021-12-31 11:00:00 ]</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>          
+      </div>
+   </div>
+
+</div>
+{% endblock %}

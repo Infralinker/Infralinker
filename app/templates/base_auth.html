@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{{ title }} InfraLinker Project </title>
+        {% from 'bootstrap5/utils.html' import render_icon %}
+        {% from 'bootstrap5/utils.html' import render_static %}
+        {% block styles %}
+            <!-- Bootstrap CSS -->
+            {{ bootstrap.load_css() }}
+            {{ render_static('css', 'css/style.css') }}
+        {% endblock %}
+
+        {% block scripts %}
+            <!-- Optional JavaScript -->
+            {{ bootstrap.load_js() }}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            {{ render_static('js', 'js/script.js') }}
+    
+        {% endblock %}
+    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    {{ ckeditor.config(name='body', custom_config='versionCheck: false') }}
+
+</head>
+<style>
+    img {
+        -webkit-filter: drop-shadow(5px 5px 5px #222);
+        filter: drop-shadow(5px 5px 5px #222);
+    }
+
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container topnav">
+            <a class="navbar-brand" href="{{ url_for('home.homepage') }}">
+                <img src="{{ url_for('static', filename='img/big-logo.png') }}" alt="Your Company Logo" height="45">
+              </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarColor01">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('home.admin_dashboard') }}">{{ render_icon('speedometer2') }}   - DASHBOARD
+                      <span class="visually-hidden">(current)</span>
+                    </a>
+                  </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('cloud') }}  - ASSETS</a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="{{ url_for('admin.list_datacenters') }}">{{ render_icon('buildings') }}   - DATACENTERS </a>
+                        <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{{ url_for('admin.list_racks') }}">{{ render_icon('building') }}  - RACKS</a>
+                      <a class="dropdown-item" href="{{ url_for('admin.list_platforms') }}">{{ render_icon('hdd-stack') }} - DEVICES</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{{ url_for('admin.list_networks') }}">{{ render_icon('diagram-3') }} - VLAN / NETWORKS</a>
+                      <a class="dropdown-item" href="{{ url_for('admin.list_servers') }}">{{ render_icon('ethernet') }}  - IP / SERVERS</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{{ url_for('admin.list_applications') }}">{{ render_icon('window-stack') }} - APPLICATIONS</a>
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin.list_projects',  id=current_user.id) }}">{{ render_icon('rocket-takeoff') }} - PROJECTS                
+                    </a>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('gpu-card') }} - MANAGEMENTS<span class="caret"></span></a>
+                    <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ url_for('auth.list_tickets') }}">{{ render_icon('ticket-detailed') }} - TICKETS </a>
+                    <a class="dropdown-item" href="{{ url_for('admin.list_vulnerabilities') }}">{{ render_icon('bug') }} - VULNERABILITIES </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('auth.suppliers_list') }}">{{ render_icon('bag-plus') }} - SUPPLIERS </a>
+                    <a class="dropdown-item" href="{{ url_for('admin.list_contracts') }}">{{ render_icon('file-earmark-medical') }} - CONTRACTS </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('admin.list_departments') }}">{{ render_icon('building-lock') }} - DEPARTEMENTS </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('admin.devices_role_list') }}">{{ render_icon('pc-horizontal') }} - DEVICE ROLE </a>
+                    <a class="dropdown-item" href="{{ url_for('auth.tags_list') }}">{{ render_icon('tags') }} - TAGS </a>                    
+                    </div>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('person-square') }} Hi, {{ current_user.firstname }}! <span class="caret"></span></a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="{{ url_for('auth.edit_end_user', id=current_user.id) }}">{{ render_icon('pencil-square') }} - EDIT PROFIL</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{{ url_for('auth.logout') }}">{{ render_icon('box-arrow-right') }} - LOGOUT</a>
+                      <a class="dropdown-item" href="{{ url_for('home.help') }}">{{ render_icon('info-circle') }} - About</a>
+                    </div>
+                  </li>
+                  {% if current_user.is_manager %}
+                    <li title="Your are Manager">{{ render_icon('square-fill', color="warning", size="20px") }}</li>
+                    {% else %}
+                    <li title="Your are User">{{ render_icon('square-fill', color="info", size="20px") }}</li>
+                    {% endif %}
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('auth.login') }}">{{ render_icon('box-arrow-in-right') }} - LOGIN
+                          <span class="visually-hidden">(current)</span>
+                        </a>
+                      </li>
+                    {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <div class="wrapper">
+        {% block body %}
+        {% endblock %}
+        <div class="push"></div>
+    </div>
+    <footer class="text-white" style="background-color: #0a4275;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                  <div class="list-inline">
+                    <a href="{{ url_for('home.homepage') }}" class="btn btn-outline-light btn-rounded"> Home</a>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-rounded"> LOGOUT</a>
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-rounded"> LOGIN</a>
+                    {% endif %}
+                </div>
+                    <p class="copyright text-white">Copyright &copy; 2022. All Rights Reserved <a href="https://www.infralinker.net">InfraLinker</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

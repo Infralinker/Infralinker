@@ -1,0 +1,165 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}DEVICES{% endblock %}
+{% block body %}
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<!-- Jquery Confirmation -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section">
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;" class="mb-5">Devices List</h1>
+    <div class="container-fluid">
+        <div style="text-align: left;">
+
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.new_platform') }}" class="btn btn-success btn-sm">
+                {{ render_icon('plus-square') }}
+                NEW DEVICE
+            </a>
+            <a href="{{ url_for('admin.import_platforms_data') }}" class="btn btn-warning btn-sm">
+                {{ render_icon('database-fill-down') }}
+                IMPORT DEVICES CSV DATA
+            </a>
+        </div>
+        {% if platforms %}
+        <table data-toggle="table" data-search="true" data-show-columns="true" data-pagination="true"
+            data-buttons-class="info" data-page-size="50" data-page-list="[25, 50, 100, 200]">
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="1%">#ID</th>
+                    <th width="10%">Name </th>
+                    <th width="10%">serial number </th>
+                    <th width="5%">supplier </th>
+                    <th width="15%">rack </th>
+                    <th width="9%">U-Position </th>
+                    <th width="10%">Device Role </th>
+                    <th width="10%">warranty</th>
+                    <th width="10%">Contract</th>
+                    <th width="5%">Network ID</th>
+                    <th width="2%">Nbr Servers </th>
+                    <th width="15%">Action </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for platform in platforms %}
+                <tr>
+                    <th> {{ platform.id }} </th>
+                    <td> {{ platform.platform_name }} </td>
+                    <td> {{ platform.serial_number }} </td>
+                    <td> {{ platform.supplier.company_name }} </td>
+                    <td> {{ platform.rack.r_name }} </td>
+                    <td> [ {{ platform.u_position }}] </td>
+                    <td> <strong><span style="background-color: {{ platform.device_role.device_color}};" class="badge">
+                                {{ platform.device_role.name }} </span></strong></td>
+
+                    <td>
+                        {% if platform.end_warranty_date %}
+                        {% if check_expiration_date(platform.end_warranty_date)==1 %}
+                        <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">IN
+                            WARRANTY</span>
+                        {% elif check_expiration_date(platform.end_warranty_date)==3 %}
+                        <span class="badge bg-warning" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE IN
+                            3 MONTH</span>
+                        {% else %}
+                        <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">OUT
+                            WARRANTY</span>
+                        {% endif%} </span>
+                        {% else %}
+                        <span class="badge bg-info">NO WARRANTY</span>
+                        {% endif%}
+                    </td>
+                    <td>
+                        {% if platform.contract.end_date %}
+                        {% if check_expiration_date(platform.contract.end_date)==1 %}
+                        <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">VALID
+                            CONTRACT</span>
+                        {% elif check_expiration_date(platform.contract.end_date)==3 %}
+                        <span class="badge bg-warning" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE IN
+                            3 MONTH</span>
+                        {% else %}
+                        <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRED
+                            CONTRACT</span>
+                        {% endif%}
+                        {% else %}<span class="badge bg-info">NO CONTRACT</span>
+                        {% endif%}
+                    </td>
+
+                    <td> {{ platform.network_identity }}</td>
+                    <td> {% if platform.servers %}
+                        {{ platform.servers.count() }}
+                        {% else %}
+                        00
+                        {% endif %}
+                    </td>
+                    {% if current_user.is_admin or current_user.control_platforms %}
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.platform_details', id=platform.id) }}"
+                                class="btn btn-sm btn-info">{{ render_icon('eye', size='20px') }}</ <strong
+                                    style="color: white;">DETAILS</strong></a>
+                            <a href="{{ url_for('admin.edit_platform', id=platform.id) }}"
+                                class="btn btn-sm btn-primary">{{ render_icon('pen', size='20px') }}</a>
+                            <a href="{{ url_for('admin.delete_platform', id=platform.id) }}"
+                                class="confirmation_remove btn btn-sm btn-danger">
+                                {{ render_icon('trash', size='20px') }}</a>
+                        </div>
+                    </td>
+                    {% else %}
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.platform_details', id=platform.id) }}"
+                                class="btn btn-sm btn-info">{{ render_icon('eye', size='20px') }}</ <strong
+                                    style="color: white;">DETAILS</strong></a>
+                            <a class="btn btn-sm btn-primary disabled" >{{ render_icon('pen', size='20px') }}</a>
+                            <a class="btn btn-sm btn-danger disabled" >{{ render_icon('trash', size='20px') }}</a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="text-align: center;">
+            {% else %}
+            <div style="text-align: center;">
+                <h3> NO DEVICES ADDED YET. </h3>
+                
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('a.confirmation_remove').confirm({
+        title: "CONFIRMATION",
+        content: "Are you sure you want to delete this server ?!",
+    });
+    $('a.confirmation_remove').confirm({
+        buttons: {
+            hey: function () {
+                location.href = this.$target.attr('href');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

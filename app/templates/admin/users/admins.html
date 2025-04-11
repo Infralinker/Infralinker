@@ -1,0 +1,120 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% extends "base.html" %}
+{% block title %}Liste des Admins{% endblock %}
+{% block body %}
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section" style="margin-left: 80px; margin-right: 80px;">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;" class="mb-5">USERS LIST</h1>
+
+    <div class="container-fluid">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.new_admin') }}" class="btn btn-success btn-sm">
+                {{ render_icon('person-fill-add') }}
+                NEW USER
+            </a>
+        </div>
+        <br>
+
+        {% if admins %}
+        <table class="table table-striped  table-condensed" data-toggle="table" data-search="true"
+            data-show-columns="true" data-pagination="true" data-buttons-class="info" aria-label="VIEW  ALL USERS">
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="1%">#id</th>
+                    <th width="10%">firstname</th>
+                    <th width="10%">lastname</th>
+                    <th width="5%">Phone</th>
+                    <th width="10%">function</th>
+                    <th width="10%">department</th>
+                    <th width="5%">Admin</th>
+                    <th width="5%">Manager</th>
+                    <th width="10%">LastSeen </th>
+                    <th width="10%">ACTIONS</th>
+                    <th width="10%">CHAG Passwd</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in admins %}
+                <tr>
+                    <td> {{ admin.id }} </td>
+                    <td> {{ admin.firstname }} </td>
+                    <td> {{ admin.lastname }} </td>
+                    <td> {{ admin.phone }} </td>                    
+                    <td> {{ admin.function }} </td>
+                    <td> {{ admin.department.name }} </td>
+                    <td>
+                        {% if admin.is_admin %}
+                        {{ render_icon('person-fill-check', color='success') }}
+                        {% else %}
+                        {{ render_icon('person-fill-x', color='danger') }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if admin.is_manager %}
+                        {{ render_icon('person-fill-check', color='info') }}
+                        {% else %}
+                        {{ render_icon('person-fill-x', color='warning') }}
+                        {% endif %}
+                    </td>
+                    <td> {{ admin.last_seen }}</td>
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.edit_admin', id=admin.id) }}" class="btn btn-sm btn-primary">
+                                {{ render_icon('pen', size='20px') }}</a>
+                            <a href="{{ url_for('admin.delete_admin', id=admin.id) }}"
+                                class="confirmation_remove btn btn-sm btn-danger">
+                                {{ render_icon('trash', size='20px') }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.admin_password_resetter', id=admin.id) }}"
+                            class="btn btn-sm btn-warning">{{ render_icon('key-fill', size='20px') }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <div style="text-align: center;">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO USERS ADDED YET. </h3>
+            
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('a.confirmation_remove').confirm({
+            title: "CONFIRMATION",
+            content: "Are you sure you want to delete this user ?!",
+        });
+        $('a.confirmation_remove').confirm({
+            buttons: {
+                hey: function () {
+                    location.href = this.$target.attr('href');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% from 'bootstrap5/form.html' import render_form %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}
+{% if new_action %}
+Add New Action
+{% else %}
+Edit Action
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="content-section">
+    {{ form.csrf_token() }}
+    <br />
+    <br />
+    <br />
+    <div class="center">
+        <div class="card border-default">
+            <div class="card-header">
+                <strong style="font-size:25px;  font-weight: 900;">{% if new_action %}
+                    ADD NEW TASK
+                    {% else %}
+                    EDIT TASK
+                    {% endif %} <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm float-end">CANCEL</a></strong>
+            </div>
+            <div class="card-body">
+                {% if new_action %}
+                <h4 style="color: cadetblue; text-align: center;"><legend> {{ project.project_name }} </legend></h4>
+                <br>
+                {% endif %}
+                <br />
+                {{ render_form(form, button_style='success', button_size='block') }}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

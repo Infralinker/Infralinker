@@ -1,0 +1,216 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}DEVICE DETAILS{% endblock %}
+{% block body %}
+<link href="{{ url_for('static', filename='css/rack_style.css')}}" type="text/css" rel="stylesheet" />
+<style>
+    hr {
+        margin: 5px;
+    }
+</style>
+<div class="content-section"  style="margin-left: 50px; margin-right: 50px;">
+    
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;">DEVICE DETAILS</h1>
+    <div class="container-fluid">
+        <div style="text-align: right;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.edit_platform', id=platform.id) }}" class="btn btn-warning btn-sm">
+                {{ render_icon('pen') }}
+                EDIT DEVICE
+            </a>
+        </div>
+        <br>
+        <div class="row" style="font-family: Nunito;">
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+        
+                    <div class="card-body" style="font-size:18px;">
+                        <legend class="card-title text-left" style="font-size: 25px; font-weight: 900;"> DETAILS </legend>
+                        <br>
+                        <p> <strong> DEVICE NAME : </strong> <span>
+                                {{platform.platform_name}} </span> </p>
+                        <hr>
+                        <p> <strong> SERIAL NUMBER : </strong> <span>
+                                {{platform.serial_number}} </span> </p>
+                        <hr>
+                        <p> <strong> DEVICE ROLE : </strong><span
+                                style="background-color: {{ platform.device_role.device_color}};"
+                                class="badge">{{platform.device_role.name}} </span> </p>
+                        <hr>
+                        <p> <strong> NUMBER OF SERVERS IN HOST :</strong> <span
+                            >{% if platform.servers %} {{platform.servers.count()}} {%else%}
+                                00 {%endif%} HOSTS </span> </p>
+                        <hr>
+                        <p> <strong> INFOS IN RACK : </strong> <span>
+                        <ul>
+                        <li>RACK NAME : {{platform.rack.r_name}} </li>
+                        <li>DEVICE POSITION IN RACK :  {{ platform.u_position }} </li>
+                        <li>CONSUMED UNITS : {{platform.u_hight}} U</li>
+                        </ul>
+                        <hr>
+                        <p> <strong> SUPPLIER :</strong> <span>
+                               <a href="{{ url_for('auth.supplier_details', id=platform.supplier.id) }}"> {{platform.supplier.company_name}} {{ render_icon('arrow-right-circle-fill', color='info', size="15") }} </a></span> </p>
+                        <hr>
+                        <p> <strong> PRODUCTION DATE :</strong> <span>
+                                {{platform.production_date}} </span> </p>
+                        <hr>
+                        <p> <strong> WARRANTY DATE :</strong> <span>
+                                {{platform.end_warranty_date}}
+                                {% if platform.end_warranty_date %}
+                                {% if check_expiration_date(platform.end_warranty_date)==1 %}
+                                <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">IN
+                                    WARRANTY</span>
+                                <hr>
+                                {% elif check_expiration_date(platform.end_warranty_date)==3 %}
+                                <span class="badge bg-warning"
+                                    title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE IN LESS THAN 3
+                                    MONTH</span>
+                                <hr>
+                                {% else %}
+                                <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">OUT
+                                    WARRANTY</span>
+                                <hr>
+                                {% endif%}
+                            </span> </p>
+                        {% else %}
+                        <span class="badge bg-default">NO WARRANTY</span> </p>
+                        {% endif%}
+
+                        <p> <strong style="font-size: 20px;"> POWER SUPPLY : </strong> <span style="font-size: 20px;">
+                                {{platform.power_supply}} WATTS</span> </p>
+                        <hr>
+                        <p> <strong style="font-size: 20px;"> ADD BY : </strong> <span style="font-size: 20px;">
+                                {{get_UserName(platform.add_by)[0]}} {{get_UserName(platform.add_by)[1]}} </span> </p>
+                        <hr>
+                        <p> <strong style="font-size: 20px;"> ADD DATE : </strong> <span style="font-size: 20px;">
+                                {{platform.add_date}} </span> </p>
+                        <hr>
+                        <p> <strong style="font-size: 20px;"> NETWORK INFORMATIONS : </strong> <span
+                                style="font-size: 20px;"> {{platform.network_identity}} </span> </p>
+                    </div>
+                </div>
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p> <strong class="card-title text-center" style="font-size: 25px;  font-weight: 900;"> TAGS
+                            </strong><br>
+                            {% if platform.tags %}
+                            {% for tag in platform.tags.rsplit(",") %}
+                            <strong><span style="background-color: {{ get_tag_color(tag.strip()) }};" class="badge">{{ render_icon('tag', size='20px') }} {{tag}}
+                                </span></strong>
+                            {% endfor %}
+                            {% endif %}
+                            
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p> <legend  class="card-title text-left" style="font-size: 25px; font-weight: 900;">NOTES
+                                <br>
+                            </legend><span> {{ platform.notes|safe }}</span> </p>
+                    </div>
+                </div>
+
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:18px;">
+                        <p> <legend  class="card-title text-left" style="font-size: 25px;  font-weight: 900;"> MAINTENANCE CONTRACT  </legend>
+                            <br>
+                            <strong> STATUS : </strong>
+                            {% if platform.contract %}
+                            {% if check_expiration_date(platform.contract.end_date)==1 %}
+                            <span class="badge bg-success" title=" EXPIRE IN : {{platform.contract.end_date}}">VALID
+                                CONTRACT</span>
+                            <hr>
+                            {% elif check_expiration_date(platform.contract.end_date)==3 %}
+                            <span class="badge bg-warning" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRE
+                                IN LESS THAN 3 MONTH</span>
+                            <hr>
+                            {% else %}
+                            <span class="badge bg-danger" title=" EXPIRE IN : {{platform.contract.end_date}}">EXPIRED
+                                CONTRACT</span>
+                            <hr>
+                            {% endif%}
+                        <p> <strong> START DATE : </strong> <span>
+                                {{platform.contract.start_date}} </span> </p>
+                        <hr>
+                        <p> <strong> END DATE : </strong> <span>
+                                {{platform.contract.end_date}} </span> </p>
+                        <hr>
+                        <p> <strong> CONTRACT SUPPLIER : </strong> <span
+                            ><a href="{{ url_for('admin.contract_details', id=platform.contract.supplier.id) }}">{{platform.contract.supplier.company_name}} {{ render_icon('arrow-right-circle-fill', color='info', size="15") }} </a></span> </p>
+                        {% else %}
+                        <span class="badge bg-default">NO CONTRACT</span> </p>
+                        {% endif%}
+                    </div>
+                </div>
+
+                <div class="card border-primary mb-4">
+                    
+                    <div class="card-body" style="font-size:20px;">
+                        <p> <legend  class="card-title text-left" style="font-size: 25px;  font-weight: 900;"> TICKETS HISTORY OF DEVICE
+                            </legend><br>
+    
+                                    {% if tickets %}
+                                    <table class="table table-striped"  style="font-size:14px;"  aria-label="VIEW TICKETS LIST">
+                                        <thead class="table-info"  style=" text-transform: uppercase;">
+                                            <tr>
+                                                <th> N. TICKET </th>
+                                                <th> D. OPEN </th>
+                                                <th> DEVICE </th>
+                                                <th> IN CHARGE </th>
+                                                <th> STATUS </th>
+                                                <th> SHOW </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for ticket in tickets %}
+                                            <tr>                                         
+                                                <td> {{ ticket.ticket_number }} </td>
+                                                <td> {{ ticket.open_date }} </td>                                            
+                                                <td> {{ ticket.platform.platform_name }} </td>
+                                                <td> {{ ticket.admin.firstname }} {{ ticket.admin.lastname }} </td>
+                                                <td>
+                                                    {% if (ticket.status  == "RESOLVED") %}
+                                                    <span class="badge bg-success lb-sm">{{ ticket.status }}</span>
+                                                    {% elif (ticket.status  == "OPEN")%}
+                                                    <span class="badge bg-warning lb-sm">{{ ticket.status }}</span>
+                                                    {% else %}
+                                                    <span class="badge bg-primary lb-sm">{{ ticket.status }}</span>
+                                                    {%endif%}
+                                                </td>
+                                                <td>    
+                                                        <a href="{{ url_for('auth.ticket_details', id=ticket.id) }}" class="badge bg-info" title="Show Ticket Details." style="color:white;">
+                                                            {{ render_icon('eye', size='20px') }}
+                                                        </a>                                                
+                                                </td>                                         
+                                              
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% endif %}
+                            </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

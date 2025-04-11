@@ -1,0 +1,22 @@
+{% import "bootstrap/utils.html" as utils %}
+{% import "bootstrap/utils.html" as utils %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}InfraLinker Home Page{% endblock %}
+{% block body %}
+<div class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="intro-message">
+                 <img src="{{ url_for('static', filename='img/big-logo.png') }}" style="width:550px" alt="" class="mb-5" />
+                    <h2> <span> DATACENTER INFRASTRUCTURE & ASSETS  MANAGEMENT </span></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

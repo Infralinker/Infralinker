@@ -1,0 +1,139 @@
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Liste of Tasks{% endblock %}
+{% block body %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section">
+    <br />
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <div class="container">
+        <h1 style="text-align:center;" class="mb-5">LISt OF TASKS</h1>
+
+        <div style="text-align: right;">
+            {% if current_user.is_admin %}
+            <a href="{{ url_for('admin.list_projects') }}" class="btn btn-primary btn-sm">
+                {% else %}
+                <a href="{{ url_for('admin.list_projects',  id=current_user.id) }}" class="btn btn-primary btn-sm">
+                    {% endif %}
+                    {{ render_icon('speedometer2') }}
+                    RETURN TO PROJECTS PAGE
+                </a>
+                <a style="color: white;" href="{{ url_for('auth.new_action', project_id = project_id) }}"
+                    class="btn btn-sm btn-success">
+                    {{ render_icon('plus-circle') }}NEW TASK
+                </a>
+        </div> <br />
+        {% if actions %}
+
+        <table class="table table-striped table-condensed" aria-badge="VIEW  ALL ACTIONS LIST">
+            <thead class="table-info" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="5%"> TASK ID </th>
+                    <th width="40%"> DESCRIPTION </th>
+                    <th width="10%"> STATUS </th>
+                    <th width="10%"> START DATE </th>
+                    <th width="10%"> FINISH DATE </th>
+                    <th width="5%"> EDIT </th>
+                    <th width="5%"> DELETE </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for action in actions %}
+                <tr>
+                    <td> {{ action.id}} </td>
+                    <td> {{ action.description}} </td>
+                    <td>
+                        {% if action.status=="PLANNED" %}
+                        <span class="badge navy"> {{ action.status }}</span>
+                        {% elif action.status=="PROGRESS" %}
+                        <span class="badge red"> {{ action.status }}</span>
+                        {% elif action.status=="COMPLETE" %}
+                        <span class="badge teal"> {{ action.status }}</span>
+                        {% else %}
+                        <span class="badge yellow"> {{ action.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td> {{ action.execution_date}} </td>
+                    <td> {{ action.finish_date}} </td>
+                    {% if current_user.is_admin%}
+                    <td>
+                        <a href="{{ url_for('auth.edit_action', id=action.id) }}" class="btn btn-sm btn-primary">
+                            {{ render_icon('pen', size='20px') }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('auth.delete_action', id=action.id) }}" class="btn btn-sm btn-danger">
+                            {{ render_icon('trash', size='20px') }}
+                        </a>
+                    </td>
+                    {% else%}
+                    <td>
+                        <a href="{{ url_for('auth.edit_action', id=action.id) }}" class="btn btn-sm btn-primary">
+                            {{ render_icon('pen', size='20px') }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('auth.delete_action', id=action.id) }}"
+                            class="confirmation_remove btn btn-sm btn-danger">
+                            {{ render_icon('trash', size='20px') }}
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <h1 style="text-align:center;">PROJECT PLAN GANTT CHART</h1>
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <div id='chartCanttGraph' class='chart'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO TASKS FOR THIS PROJECT. </h3>            
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    <script type='text/javascript'>
+        var GanttChart_chart = {{ graphChart_For_Actions | safe}};
+        Plotly.plot('chartCanttGraph', GanttChart_chart, {});
+    </script>
+</div>
+<script>
+    $(document).ready(function () {
+        $('a.confirmation_remove').confirm({
+            title: "CONFIRMATION",
+            content: "Are you sure you want to delete this Task ?!",
+        });
+        $('a.confirmation_remove').confirm({
+            buttons: {
+                hey: function () {
+                    location.href = this.$target.attr('href');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

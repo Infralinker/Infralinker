@@ -1,0 +1,260 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}PROJECT DETAILS{% endblock %}
+{% block body %}
+
+<style>
+    hr {
+        margin: 10px;
+        margin-left: auto;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+<div class="content-section" style="margin-left: 50px; margin-right: 50px;">
+    <br />
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    <h1 style="text-align:center;">PROJECT DETAILS</h1>
+
+    <br />
+    <div class="container-fluid">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.edit_project', id=project.id) }}" class="btn btn-sm btn-success">
+                {{ render_icon('pen') }} EDIT PROJECT</a>
+        </div>
+        <br>
+        <div class="row" style="font-family: Nunito;">
+            <div class="col-6">
+                <div class="card border-danger mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <legend style="font-size: 25px; font-weight: 900;"> DETAILS </legend>
+                        <p> <strong> PROJECT NAME : </strong> <span>
+                                {{ project.project_name}} </span> </p>
+
+                        <hr>
+                        <p> <strong> PROJECT MANAGER : </strong> <span> {{ project.admin.firstname }} {{
+                                project.admin.lastname
+                                }}</span> </p>
+                        <hr>
+                        <p> <strong> DATE AFFECTATION : </strong> <span>
+                                {{ project.affectation_date}} </span> </p>
+                        <hr>
+                        <p> <strong> STATUS : </strong> <span>
+                                {% if project.status == "PROGRESS" %}
+                                <span class="badge red"> {{ project.status }}</span>
+                                {% elif project.status == "HOLD" %}
+                                <span class="badge yellow"> {{ project.status }}</span>
+                                {% else %}
+                                <span class="badge teal"> {{ project.status }}</span>
+                                {% endif %}
+                            </span> </p>
+                        <br>
+                    </div>
+                </div>
+                <div class="card border-info mb-4">
+                    
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> PROJECT DESCRIPTION </legend><span>
+                                {{ project.description | safe }}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-info mb-4">
+                    
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> PROJECT TASKS </legend>
+                            {% if tasks %}
+
+                        <table class="table table-hover table-striped" style="font-size:14px;">
+                            <thead class="table-info" style=" text-transform: uppercase;" style="font-size: 14px;">
+                                <tr>
+                                    <th> DESCRIPTION </th>
+                                    <th> STATUS </th>
+                                    <th> START DATE </th>
+                                    <th> FINISH DATE </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in tasks %}
+                                <tr>
+                                    <td> {{ task.description}} </td>
+                                    <td>
+                                        {% if task.status=="PLANNED" %}
+                                        <span class="badge navy"> {{ task.status }}</span>
+                                        {% elif task.status=="PROGRESS" %}
+                                        <span class="badge red"> {{ task.status }}</span>
+                                        {% elif task.status=="COMPLETE" %}
+                                        <span class="badge teal"> {{ task.status }}</span>
+                                        {% else %}
+                                        <span class="badge yellow"> {{ task.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td> {{ task.execution_date}} </td>
+                                    <td> {{ task.finish_date}} </td>
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card border-info mb-4">
+                    <!-- <div class="panel-heading"></div> -->
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> CONCERNED SERVERS / IP's </legend>
+                        <table class="table table-hover table-striped" style="font-size:14px;">
+                            <thead class="table-info" style=" text-transform: uppercase;" style="font-size: 14px;">
+                                <tr>
+                                    <th>NAME</th>
+                                    <th>IP</th>
+                                    <th>TYPE</th>
+                                    <th>VITALITY</th>
+                                    <th>SHOW</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for server in servers_list %}
+                                <tr>
+                                    <td> {{ server.server_name }} </td>
+                                    <td> {{ server.ip_address }} </td>
+                                    <td>
+                                        {% if server.type == "VM" %}
+                                        <span class="badge teal"> {{ server.type }}</span>
+                                        {% elif server.type == "VIP" %}
+                                        <span class="badge red"> {{ server.type }}</span>
+                                        {% elif server.type == "POD" %}
+                                        <span class="badge yellow"> {{ server.type }}</span>
+                                        {% else %}
+                                        <span class="badge navy"> {{ server.type }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if server.vitality_classification == "VITAL" %} <span
+                                            class="badge bg-danger">VITAL</span>
+                                        {% elif server.vitality_classification == "IMPORTANT" %} <span
+                                            class="badge bg-warning">IMPORTANT</span>
+                                        {% else %} <span class="badge bg-success">MIDDLE</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('admin.server_details', id=server.id) }}"
+                                            class="btn btn-sm btn-info">
+                                            {{ render_icon('eye', size='20px') }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        </p>
+                    </div>
+                </div>
+                <div class="card border-info mb-4">
+                    <!-- <div class="panel-heading"></div> -->
+                    <div class="card-body" style="font-size:20px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <p>
+                                    <legend style="font-size: 25px; font-weight: 900;"> INTERNAL MEMBERS </legend>
+                                <ul>
+                                    {% if project.members %}
+                                    {% for member in project.members.rsplit(",") %}
+                                    <strong>
+                                        <li>{{member}} </li>
+                                    </strong>
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p>
+                                    <legend style="font-size: 25px; font-weight: 900;"> EXTERNAL MEMBERS </legend>
+                                <ul>
+                                    {% if project.external_members %}
+                                    {% for external_member in project.external_members.rsplit(",") %}
+                                    <strong>
+                                        <li>{{external_member}} </li>
+                                    </strong>
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="card border-info mb-4">
+                    <!-- <div class="panel-heading"></div> -->
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 23px; font-weight: 900;"> TAGS </legend>
+                            {% if project.tags %}
+                            {% for tag in project.tags.rsplit(",") %}
+                            <strong><span style="background-color: {{ get_tag_color(tag.strip()) }};" class="badge">
+                                {{ render_icon('tag') }} {{tag}} </span></strong>
+                            {% endfor %}
+                            {% endif %}
+
+                    </div>
+                </div>
+                <div class="card border-info mb-4">
+                    
+                    <div class="card-body" style="font-size:20px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;"> PROJECT DOCUMENTS </legend><span>
+
+                                <table class="table table-hover table-striped" style="font-size:14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;"
+                                        style="font-size: 14px;">
+                                        <tr>
+                                            <th>DOCUMENT NAME</th>
+                                            <th>DESCRIPTIONS</th>
+                                            <th>ADD BY</th>
+                                            <th>ADD DATE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for document in project_documents %}
+                                        <tr>
+                                            <td>{{ render_icon('file-earmark-arrow-down', color='primary') }} <a
+                                                    href="{{ url_for('static', filename = 'uploads/projects/documents/'+ document.document_name )}}">{{
+                                                    document.document_name }} </a></td>
+                                            <td> {{ document.description }} </td>
+                                            <td> {{ get_UserName(document.add_by)[0] }} {{
+                                                get_UserName(document.add_by)[1] }} </td>
+                                            <td> {{ document.add_date }} </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

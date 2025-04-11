@@ -1,0 +1,92 @@
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}
+{% if new_project_document %}
+Add Document
+{% else %}
+Edit Document
+{% endif %}
+{% endblock %}
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section"  style="margin-left: 50px; margin-right: 50px;">
+    <br>
+    <div class="page-header">
+        <h1 style="text-align:center;"> PROJECT DOCUMENTS</h1>
+        <hr class="intro-divider">
+      </div>
+    <div class="center">
+        <div class="card border-info">
+            <div class="card-header">
+                <strong style="font-size:20px;"> {% if new_project %}
+                    ADD NEW DOCUMENT
+                    {% else %}
+                    EDIT DOCUMENT
+                    {% endif %} <a href="javascript:history.back()" class="btn btn-danger btn-sm pull-right">CANCEL</a></strong>
+            </div>
+            <div class="card-body mb-4">
+                {{ render_form(form, button_style='success', button_size='block') }}
+            </div>
+        </div>
+    </div>
+        <div class="center">
+        <div class="card border-info">
+            <div class="card-header">
+                <strong style="font-size:20px;"> 
+             ALL PROJECT DOCUMENTS.
+            </div>
+            <div class="card-body mb-4">
+            
+            <table class="table table-hover table-striped"  style="font-size:14px;">
+                <thead class="table-info" style=" text-transform: uppercase;" style="font-size: 14px;">
+                    <tr>
+                        <th >#ID</th>
+                        <th >DOCUMENT NAME</th>
+                        <th >DESCRIPTIONS</th>
+                        <th >ADD BY</th>
+                        <th >ADD DATE</th>
+                        <th >DELETE </th>
+                    </tr>
+                </thead>
+                <tbody>
+            {% for document in project_documents %}
+                    <tr>
+                        <td> {{ document.id }} </td>
+                        <td><a href="{{ url_for('static', filename = 'uploads/projects/documents/'+ document.document_name )}}"> {{ document.document_name }} </a></td>
+                        <td> {{ document.description }} </td>
+                        <td> {{ get_UserName(document.add_by)[0] }} {{ get_UserName(document.add_by)[1] }} </td>
+                        <td> {{ document.add_date }} </td>
+                        <td>
+                            <a href="{{ url_for('admin.delete_project_document', id=document.id) }}" title="Delete Document" class="confirmation_remove btn btn-sm btn-danger">
+                                {{ render_icon('trash') }}
+                            </a>
+                        </td>
+                    </tr>
+            {% endfor %}
+                </tbody></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('a.confirmation_remove').confirm({
+        title: "CONFIRMATION",
+        content: "Are you sure you want to delete this Document from this project ?!",
+    });
+    $('a.confirmation_remove').confirm({
+        buttons: {
+            hey: function() {
+                location.href = this.$target.attr('href');
+            }
+        }
+    });
+
+</script>
+{% endblock %}

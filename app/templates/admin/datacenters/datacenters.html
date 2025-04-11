@@ -1,0 +1,136 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Data Center List{% endblock %}
+{% block body %}
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<!-- Jquery Confirmation -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section">
+    
+    <h1 style="text-align:center; margin-bottom: 80px;">DATACENTERS LIST</h1>
+    <div class="container">
+        {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+        
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+        <a href="{{ url_for('admin.new_datacenter') }}" class="btn btn-success btn-sm">
+            {{ render_icon('cloud-plus') }}
+            NEW DATACENTER
+        </a></div>
+        {% if datacenters %}
+        <table
+  data-toggle="table"
+  data-search="true"
+  data-show-columns="true"
+  data-pagination="true"
+  data-buttons-class="info" aria-label="VIEW DATACENTERS LIST" >
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th scope="col"> ID </th>
+                    <th scope="col"> NAME </th>
+                    <th scope="col"> TYPE </th>
+                    <th scope="col"> ADDRESS </th>
+                    <th scope="col"> CITY </th>
+                    <th scope="col"> COUNTRY </th>
+                    <th scope="col"> PHONE </th>
+                    <th scope="col"> ACTIONS </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for dc in datacenters %}
+                <tr>
+                    <th> {{ dc.id }} </th>
+                    <td> {{ dc.dc_name }} </td>
+                    <td> 
+                            {% if dc.dc_type == 'ON-PREMISE' %}
+                            <strong><span style="background-color: #616161; font-size: 14px; " class="label">ON-PROMISE</span></strong>
+                            {% else %}
+                            {% set complet_name, color = get_cloud_provider_details(dc.dc_type) %}
+                            <strong><span style="background-color: {{ color }}; font-size: 14px; " class="label"> {{ complet_name }} </span></strong>
+                            {% endif %}
+                    </td>
+                    
+                    <td> {{ dc.dc_address }} </td>
+                    <td> {{ dc.dc_city }} </td>
+                    <td> {{ dc.dc_country }} </td>
+                    <td> {{ dc.dc_phone }} </td>
+                    {% if current_user.is_admin %}
+                   <td>
+                    <div class="btn-group btn-group-fixed">
+                        <a href="{{ url_for('admin.edit_datacenter', id=dc.id) }}" class="btn btn-sm btn-primary">{{ render_icon('pen', size='20px') }}</a>
+                        <a href="{{ url_for('admin.delete_datacenter', id=dc.id) }}" class="confirmation_remove btn btn-sm btn-danger">{{ render_icon('trash', size='20px') }}</a>
+                    </div></td>
+                    {% else %}
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                        <a class="btn btn-sm btn-primary disabled">{{ render_icon('pen', size='20px') }}</a>
+                        <a class="btn btn-sm btn-danger disabled">{{ render_icon('trash', size='20px') }}</a>
+                    </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <div style="text-align: center;">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO DATACENTER ADDED YET. </h3>
+            
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#bootstrap-table').bdt();
+    });
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+<script>
+$(document).ready(function() {
+    $('a.confirmation_remove').confirm({
+        title: "CONFIRMATION",
+        content: "ARE YOU SURE YOU WANT TO DELETE THIS DATA CENTER ??!",
+    });
+    $('a.confirmation_remove').confirm({
+        buttons: {
+            hey: function() {
+                location.href = this.$target.attr('href');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

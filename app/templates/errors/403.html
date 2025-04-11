@@ -1,0 +1,25 @@
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Forbidden{% endblock %}
+{% block body %}
+<div class="content-section">
+    <div class="outer">
+        <div class="middle">
+            <div class="inner">
+                <div style="text-align: center">
+                    <h1> 403 Error </h1>
+                    <h3> You do not have sufficient permissions to access this page. </h3>
+                    <hr class="intro-divider">
+                    <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-warning btn-lg">
+                        {{ render_icon('speedometer', size='40px') }}
+                        Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" style="zoom:80%;">
+
+<head>
+    {{ bootstrap.load_css() }}
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="content-section">
+        <br />
+        <h1 style="text-align:center;">TICKETS REPPORTS {{ statut_t }}</h1>
+
+
+        {% if tickets %}
+        <div class="container-fluid">
+            <table class="table table-hover table-striped">
+                <thead class="table-info" style=" text-transform: uppercase; font-size: 16px;">
+                    <tr>
+                        <th width="5%">N.TICKET</th>
+                        <th width="10%">OPEN DATE</th>
+                        <th width="5%">SUPPLIER</th>
+                        <th width="5%">PLATFORM</th>
+                        <th width="10%">IN CHARGE</th>
+                        <th width="25%">DESCRITION</th>
+                        <th width="25%">OBSERVATION</th>
+                        <th width="5%">STATUS</th>
+                        <th width="10%">RESOLUTION DATE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td> {{ ticket.ticket_number }} </td>
+                        <td> {{ ticket.open_date }} </td>
+                        <td> {{ ticket.supplier.company_name }} </td>
+                        <td> {{ ticket.platform.platform_name }} </td>
+                        <td> {{ ticket.admin.firstname }} {{ ticket.admin.lastname }} </td>
+                        <td style="word-break: break-all;"> {{ ticket.description | safe}} </td>
+                        <td style="word-break: break-all;"> {{ ticket.comments | safe }} </td>
+                        <td>
+                            {% if (ticket.status == "RESOLVED") %}
+                            <span style="color:black" class="badge bg-success lb-lg">{{ ticket.status }}</span>
+                            {% elif (ticket.status == "OPEN")%}
+                            <span style="color:black" class="badge bg-warning lb-lg">{{ ticket.status }}</span>
+                            {% else %}
+                            <span style="color:black" class="badge bg-primary lb-lg">{{ ticket.status }}</span>
+                            {%endif%}
+                        </td>
+                        <td> {{ ticket.resolution_date }} </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center">
+            {% else %}
+            <div style="text-align: center">
+                <h3> Now Tickets. </h3>
+                <hr class="intro-divider">
+                {% endif %}
+                <a class="btn btn-default btn-sm" onclick="window.print()">
+                    <i class="fa fa-plus"></i>
+                    Print this Rapport
+                </a>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+</body>

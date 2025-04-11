@@ -1,0 +1,33 @@
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% extends "base.html" %}
+{% block title %}Edit E-mail's Settings{% endblock %}
+{% block body %}
+<div class="content-section" style="margin-left: 150px; margin-right: 150px;">
+  
+  <h1 style="text-align:center;"  class="mb-5">Notification Settings</h1>
+  <div class="container">
+    <div style="text-align: left;">
+      <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+        {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+      <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+        {{ render_icon('speedometer2') }}
+        TO DASHBOARD
+      </a>
+
+    </div><br>
+    <div class="page-header">
+    </div>
+    <div class="card border-default mb-5">
+      <div class="card-header panel-heading-nav">
+        <strong style="font-size:25px;  font-weight: 900;"> E-Mail's Notification Group </strong>
+      </div>
+      <div class="card-body">
+        {{ render_form(form, button_style='success', button_size='block') }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

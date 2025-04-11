@@ -1,0 +1,239 @@
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}TICKET DETAILS{% endblock %}
+{% block body %}
+<link href="{{ url_for('static', filename='css/rack_style.css')}}" type="text/css" rel="stylesheet" />
+<style>
+    hr {
+        margin: 10px;
+        margin-left: auto;
+    }
+</style>
+<div class="content-section" style="margin-left: 50px; margin-right: 50px;">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    <h1 style="text-align:center;">TICKET DETAILS</h1>
+
+    <div class="container-fluid">
+        <div style="text-align: right;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('auth.edit_ticket', id=ticket.id) }}" class="btn btn-warning btn-sm">
+                {{ render_icon('pen') }}
+                EDIT TICKET
+            </a>
+        </div>
+        <br>
+        <div class="row mb-4" style="font-family: Nunito;">
+            <div class="col-lg-6">
+                <div class="card borde-primary mb-4">
+                    <div class="card-body" style="font-size:18px;">
+                        <legend style="font-size: 25px; font-weight: 900;"> DETAILS </legend>
+                        <br>
+                        <p> <strong> TICKET NUMBER : </strong> <span>
+                                {{ticket.ticket_number}} </span> </p>
+                        <hr>
+                        <p> <strong> OPEN DATE : </strong> <span>
+                                {{ticket.open_date}} </span> </p>
+                        <hr>
+                        <p> <strong> CONCERNED DEVICE :</strong> <span>{{ ticket.platform.platform_name}} </span> </p>
+                        <hr>
+                        <p> <strong> DEVICE ROLE : </strong><span
+                                style="background-color: {{ ticket.platform.device_role.device_color }};" class="badge">
+                                {{ticket.platform.device_role.name}} </span> </p>
+                        <hr>
+
+                        <p> <strong> SUPPLIER :</strong> <span>
+                                {{ticket.supplier.company_name}} </span> </p>
+                        <hr>
+                        <p> <strong> PRIORITY :</strong> <span>
+                                {{ticket.priority}} </span> </p>
+                        <hr>
+                        <p> <strong> IMPACT :</strong> <span>
+                                {{ticket.priority}}
+                            </span> </p>
+
+                        <hr>
+                        <p> <strong> IN CHARGE BY: </strong> <span>
+                                {{ ticket.admin.firstname }} {{ ticket.admin.lastname }} </span> </p>
+                        <hr>
+                        <p>
+                            <strong> STATUS : </strong> <span>
+                                {% if (ticket.status == "RESOLVED") %}
+                                <span class="badge bg-success lb-sm">{{ ticket.status }}</span>
+                                {% elif (ticket.status == "OPEN")%}
+                                <span class="badge bg-warning lb-sm">{{ ticket.status }}</span>
+                                {% else %}
+                                <span class="badge bg-primary lb-sm">{{ ticket.status }}</span>
+                                {%endif%}
+                            </span>
+                        </p>
+                        <hr>
+                        <p> <strong> RESOLUTION DATE : </strong> <span>
+                                {% if ticket.resolution_date == "0000-00-00" %}
+                                Not Resolved
+                                {%else%}
+                                {{ ticket.resolution_date}}
+                                {%endif%}
+                            </span> </p>
+                        <hr>
+                        <p> <strong> ADD BY : </strong> <span>{{get_UserName(ticket.add_by)[0]}}
+                                {{get_UserName(ticket.add_by)[1]}} AT {{ticket.add_date}} </span> </p></span> </p>
+                        <hr>
+                        <p> <strong> TICKET AFFECTED TO VULNERABILITY : </strong> <span>
+
+                                <table class="table table-hover table-striped" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+                                            <th width="30%">title </th>
+                                            <th width="15%">SEVERITY </th>
+                                            <th width="15%">risk level </th>
+                                            <th width="15%">status</th>
+                                            <th width="5%">Show </th>
+                                        </tr>
+                                    </thead>
+                                    {% if vulnerabilities %}
+                                    <tbody>
+                                        {% for vulnerability in vulnerabilities %}
+                                        <tr>
+                                            <td> {{ vulnerability.title_vulnerability }} </td>
+                                            <td>
+                                                {% if (vulnerability.severity == "CRITICAL") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #FF0303 ;"
+                                                        class="badge">CRITICAL</span></strong>
+                                                {% elif (vulnerability.severity == "HIGH") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #EA5455 ;"
+                                                        class="badge">HIGH</span></strong>
+                                                {% elif (vulnerability.severity == "MEDIUM") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #F07B3F ;"
+                                                        class="badge">MEDIUM</span></strong>
+                                                {% elif (vulnerability.severity == "LOW") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #00B8A9 ;"
+                                                        class="badge">LOW</span></strong>
+                                                {% elif (vulnerability.severity == "INFORMATION") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #3F72AF ;"
+                                                        class="badge">INFORMATION</span></strong>
+                                                {% else %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if (vulnerability.risk == "ACCEPTABLE") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #5aa469 ;"
+                                                        class="badge">ACCEPTABLE</span></strong>
+                                                {% elif (vulnerability.risk == "TOLERABLE") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #f8d49d ;"
+                                                        class="badge">TOLERABLE</span></strong>
+                                                {% elif (vulnerability.risk == "UNDESIRABLE") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #efb08c ;"
+                                                        class="badge">UNDESIRABLE</span></strong>
+                                                {% elif (vulnerability.risk == "INTOLERABLE") %}
+                                                <strong style="font-size:16px ;"><span
+                                                        style="background-color: #FF0303 ;"
+                                                        class="badge">INTOLERABLE</span></strong>
+                                                {% else %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if vulnerability.ticket.status == "OPEN" %}
+                                                <span class="badge bg-danger lb-lg">OPEN</span>
+                                                {%else%}
+                                                <span class="badge bg-success lb-lg">RESOLVED</span>
+                                                {%endif%}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.vulnerability_repport', id=vulnerability.id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    {{ render_icon('eye', size='20px') }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    {% endif %}
+                                </table>
+                            </span> </p><br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card borde-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px; font-weight: 900;">DESCRIPTION
+                            </legend><span> {{ ticket.description |safe }}</span>
+                        </p><br>
+                    </div>
+                </div>
+
+                <div class="card borde-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px;  font-weight: 900;"> OBSERVATION </legend>
+                            <span> {{ ticket.comments|safe }}</span>
+                        </p><br>
+                    </div>
+                </div>
+                <div class="card borde-primary mb-4">
+
+                    <div class="card-body" style="font-size:18px;">
+                        <p>
+                            <legend style="font-size: 25px;  font-weight: 900;"> INTERVENTIONS </legend>
+                            <span>
+                                <table class="table table-striped table-condensed" style="font-size: 14px;">
+                                    <thead class="table-info" style=" text-transform: uppercase;">
+                                        <tr>
+
+                                            <th width="20%"> DATE </th>
+                                            <th width="30%"> NOTES </th>
+                                            <th width="15%"> internal contributor </th>
+                                            <th width="15%"> external contributor </th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for intervention in interventions %}
+                                        <tr>
+
+                                            <td> {{ intervention.intervention_date}} </td>
+                                            <td> {{ intervention.comment | safe }} </td>
+                                            <td> {{ intervention.admin.firstname}} {{ intervention.admin.lastname}}</td>
+                                            <td> {{ intervention.contact.firstname}} {{ intervention.contact.lastname}}
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </span>
+                        </p><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

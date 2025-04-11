@@ -1,0 +1,176 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}Liste Vulnerability{% endblock %}
+{% block body %}
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section" style="margin-left: 20px; margin-right: 20px;">
+
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+
+    <h1 style="text-align:center;" class="mb-5">LISTE OF ALL VULNERABILITIES</h1>
+
+    <div class="container-fluid">
+        <div style="text-align: left;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+            <a href="{{ url_for('admin.new_vulnerability') }}" class="btn btn-success btn-sm">
+                {{ render_icon('shield-plus') }}
+                NEW VULNERABILITY
+            </a>
+        </div>
+        {% if vulnerabilities %}
+        <table data-toggle="table" data-search="true" data-show-columns="true" data-pagination="true"
+            data-buttons-class="info" class="table table-striped mb-5" aria-label="VIEW  ALL VULNERABILITIES"
+            data-page-size="50" data-page-list="[25, 50, 100, 200]">
+
+            <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="2%">#ID</th>
+                    <th width="10%">title </th>
+                    <th width="10%">ID TICKET </th>
+                    <th width="10%">date </th>
+                    <th width="10%">CVE-ID CODES </th>
+                    <th width="15%">SUPPORTED by </th>
+                    <th width="5%">SEVERITY </th>
+                    <th width="5%">risk level </th>
+                    <th width="5%">status</th>
+                    <th width="20%">Actions </th>
+                    <th width="5%">Notes </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vulnerability in vulnerabilities %}
+                <tr>
+                    <th> {{ vulnerability.id }} </th>
+                    <td> {{ vulnerability.title_vulnerability }} </td>
+                    <td> {{ vulnerability.ticket.ticket_number }} </td>
+                    <td> {{ vulnerability.date_vulnerability }} </td>
+                    <td> {{ vulnerability.cvs_code }} </td>
+                    <!-- <td> {{ vulnerability.impact|safe }} </td> -->
+                    <td> {{ vulnerability.admin.firstname }} {{ vulnerability.admin.lastname }} </td>
+                    <td>
+                        {% if (vulnerability.severity == "CRITICAL") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #FF0303 ;"
+                                class="badge">CRITICAL</span></strong>
+                        {% elif (vulnerability.severity == "HIGH") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #EA5455 ;"
+                                class="badge">HIGH</span></strong>
+                        {% elif (vulnerability.severity == "MEDIUM") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #F07B3F ;"
+                                class="badge">MEDIUM</span></strong>
+                        {% elif (vulnerability.severity == "LOW") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #00B8A9 ;"
+                                class="badge">LOW</span></strong>
+                        {% elif (vulnerability.severity == "INFORMATION") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #3F72AF ;"
+                                class="badge">INFORMATION</span></strong>
+                        {% else %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if (vulnerability.risk == "ACCEPTABLE") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #5aa469 ;"
+                                class="badge">ACCEPTABLE</span></strong>
+                        {% elif (vulnerability.risk == "TOLERABLE") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #f8d49d ;"
+                                class="badge">TOLERABLE</span></strong>
+                        {% elif (vulnerability.risk == "UNDESIRABLE") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #efb08c ;"
+                                class="badge">UNDESIRABLE</span></strong>
+                        {% elif (vulnerability.risk == "INTOLERABLE") %}
+                        <strong style="font-size:18px ;"><span style="background-color: #FF0303 ;"
+                                class="badge">INTOLERABLE</span></strong>
+                        {% else %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if vulnerability.ticket.status == "OPEN" %}
+                        <span class="badge bg-danger lb-lg">OPEN</span>
+                        {%else%}
+                        <span class="badge bg-success lb-lg">RESOLVED</span>
+                        {%endif%}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.vulnerability_repport', id=vulnerability.id) }}"
+                                class="btn btn-sm btn-info" style="color:white;">
+                                {{ render_icon('eye', size='20px') }} <strong>DETAILS</strong>
+                            </a>
+
+                            {% if current_user.is_admin or current_user.id == vulnerability.admin.id %}
+                            <a href="{{ url_for('admin.edit_vulnerability', id=vulnerability.id) }}"
+                                class="btn btn-sm btn-warning">
+                                {{ render_icon('pen', size='20px') }}
+                            </a>
+                            <a href="{{ url_for('admin.delete_vulnerability', id=vulnerability.id) }}"
+                                class="confirmation_remove btn btn-sm btn-danger">
+                                {{ render_icon('trash', size='20px') }}
+                            </a>
+                            {% else %}
+                            <a class="btn btn-sm btn-warning disabled">
+                                {{ render_icon('pen', size='20px') }}
+                            </a>
+                            <a class="btn btn-sm btn-danger disabled">
+                                {{ render_icon('trash', size='20px') }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{% if current_user.is_admin or current_user.id == vulnerability.admin.id %}
+                        <a href="{{ url_for('auth.add_observation', id=vulnerability.id) }}"
+                            class="btn btn-sm btn-success">
+                            {{ render_icon('journal-plus', size='20px') }}
+                        </a>
+                        {% else %}
+                        <a class="btn btn-sm btn-success disabled">
+                            {{ render_icon('journal-plus', size='20px') }}
+                        </a>
+                        {%endif%}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center;">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO VULNERABILITES ADDED YET. </h3>
+            
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('a.confirmation_remove').confirm({
+            title: "CONFIRMATION",
+            content: "Are you sure you want to delete this vulnerability ?!",
+        });
+        $('a.confirmation_remove').confirm({
+            buttons: {
+                hey: function () {
+                    location.href = this.$target.attr('href');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

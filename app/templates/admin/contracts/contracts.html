@@ -1,0 +1,124 @@
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% if current_user.is_admin %}
+{% extends "base.html" %}
+{% else %}
+{% extends "base_auth.html" %}
+{% endif %}
+{% block title %}New Contract{% endblock %}
+{% block body %}
+
+{{ render_static('css', 'css/bootstrap-table.min.css') }}
+{{ render_static('js', 'js/bootstrap-table.min.js') }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<div class="content-section"  style="margin-left: 100px; margin-right: 100px;">
+    
+    {{ render_messages(container = true, dismissible=true, dismiss_animate=true) }}
+    
+    <h1 style="text-align:center;"  class="mb-5">CONTRACTS LIST</h1>
+    
+    <div class="container-fluid">
+        <div style="text-align:left ;">
+            <a href="javascript:history.back()" class="btn btn-outline-info btn-rounded btn-sm">
+                {{ render_icon('skip-backward', color='info') }} BACK TO PREVIOUS PAGE</a>
+            <a href="{{ url_for('home.admin_dashboard') }}" class="btn btn-primary btn-sm">
+                {{ render_icon('speedometer2') }}
+                TO DASHBOARD
+            </a>
+        <a href="{{ url_for('admin.new_contract') }}" class="btn btn-success btn-sm">
+            {{ render_icon('file-earmark-plus') }}
+            NEW CONTRACT
+        </a>
+        <a href="#" class="btn btn-warning btn-sm disabled">
+            {{ render_icon('database-fill-down') }}
+            IMPORT DATA
+        </a>
+    </div>
+    {% if contracts %}
+    <table data-toggle="table" data-search="true" data-show-columns="true" data-pagination="true"
+    data-buttons-class="info"  class="table table-striped mb-5"  aria-label="VIEW  ALL CONTRACTS" 
+    data-page-size="50" data-page-list="[25, 50, 100, 200]">
+
+    <thead class="table-dark" style=" text-transform: uppercase;" style="font-size: 14px;">
+                <tr>
+                    <th width="10%"> Number </th>
+                    <th width="10%"> Start Date </th>
+                    <th width="10%"> End Date </th>
+                    <th width="10%"> supplier </th>
+                    <th width="5%"> Concerned devices </th>
+                    <th width="10%"> Contract Document </th>
+                    <th width="10%"> Status </th>
+                    <th width="25%"> ACtions </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr>
+                
+                    <td> {{ contract.contract_number }} </td>
+                    <td> {{ contract.start_date }} </td>
+                    <td> {{ contract.end_date }} </td>
+                    <td> {{ contract.supplier.company_name }} </td>
+                    <td> {{ contract.platforms.count() }} </td>
+                    {% if contract.contract_document %}
+                    <td><a href="{{ url_for('static', filename = 'uploads/contracts/'+ contract.contract_document )}}"> {{ contract.contract_document }} </a></td>
+                    {% else %}
+                    <td> Empty </td>
+                    {% endif %}
+                   <td>  
+                        {% if  check_expiration_date(contract.end_date)==1 %}
+                        <span class="badge bg-success" title=" EXPIRE IN : {{contract.end_date}}">VALID CONTRACT</span>
+                        {% elif  check_expiration_date(contract.end_date)==3 %}
+                        <span class="badge bg-warning" title=" EXPIRE IN : {{contract.end_date}}">EXPIRE IN 3 MONTH</span>
+                        {% else %}
+                        <span class="badge bg-danger" title=" EXPIRE IN : {{contract.end_date}}">EXPIRED CONTRACT</span>
+                        {% endif%}
+                        
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-fixed">
+                            <a href="{{ url_for('admin.contract_details', id=contract.id) }}" class="btn btn-sm btn-info" style="color: white;">
+                                {{ render_icon('eye-fill', size='20px') }} <strong>DETAILS</strong>
+                            </a>
+                        <a href="{{ url_for('admin.edit_contract', id=contract.id) }}" class="btn btn-sm btn-primary">
+                            {{ render_icon('pen', size='20px') }}
+                        </a>
+                        <a href="{{ url_for('admin.delete_contract', id=contract.id) }}" class="confirmation_remove btn btn-sm btn-danger">
+                            {{ render_icon('trash', size='20px') }}
+                        </a>
+                    </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align: center">
+        {% else %}
+        <div style="text-align: center; margin-top: 80px;">
+            <h3> NO CONTRACTS ADDED YET. </h3>
+            
+            {% endif %}
+           
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('a.confirmation_remove').confirm({
+        title: "CONFIRMATION",
+        content: "Are you sure you want to delete this Contract ?!",
+    });
+    $('a.confirmation_remove').confirm({
+        buttons: {
+            hey: function() {
+                location.href = this.$target.attr('href');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Ticket Report</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+
+      <style>
+            body {
+                  font-size: 16px;
+                  font-family: 'Nunito', sans-serif;
+            }
+
+            .report-container {
+                  max-width: 600px;
+                  margin: 20px auto;
+                  padding: 20px;
+                  border: 1px solid #ccc;
+                  border-radius: 5px;
+            }
+
+            h1 {
+                  text-align: center;
+            }
+
+            .ticket-details {
+                  margin-top: 20px;
+            }
+
+            .ticket-details p {
+                  margin: 10px 0;
+            }
+
+            .signature {
+                  margin-top: 20px;
+                  text-align: right;
+            }
+      </style>
+</head>
+
+<body>
+      <div class="report-container">
+            
+                  {% if ticket.status == "RESOLVED" %}
+                  <h1>Resolved Ticket Report</h1>
+                  <div class="ticket-details">
+                        <p>Hello,</p>
+
+                  <p>Here are the details of a resolved Tickets :</p>
+
+                  <p><strong>Ticket Number : </strong> {{ticket.ticket_number}}</p>
+                  <p><strong>Open Date Ticket : </strong> {{ticket.open_date}}</p>
+                  <p><strong>Resolved Date Ticket : </strong> {{ticket.open_date}}</p>
+                  <p><strong>Ticket Description : </strong> {{ticket.description|safe}}</p>
+                  <p><strong>Internal Owner : </strong> {{ticket.admin.firstname}} {{ticket.admin.lastname}}</p>
+                  <p><strong>Concerned Supplier : </strong> {{ticket.supplier.company_name}}</p>
+                  <p><strong>Device Name : </strong> {{ticket.platform.platform_name}}</p>
+                  <p><strong>Ticket Observation : </strong> {{ticket.comments|safe}}</p>
+
+                  {% else %}
+                  <h1>New Ticket Report</h1>
+                  <div class="ticket-details">
+                  <p>Hello,</p>
+                  <p>Here are the details of a new Tickets :</p>
+
+                  <p><strong>Ticket Number : </strong> {{ticket.ticket_number}}</p>
+                  <p><strong>Open Date Ticket : </strong> {{ticket.open_date}}</p>
+                  <p><strong>Ticket Description : </strong> {{ticket.description|safe}}</p>
+                  <p><strong>Internal Owner : </strong> {{ticket.admin.firstname}} {{ticket.admin.lastname}}</p>
+                  <p><strong>Concerned Supplier : </strong> {{ticket.supplier.company_name}}</p>
+                  <p><strong>Device Name : </strong> {{ticket.platform.platform_name}}</p>
+                  <p><strong>Ticket Observation : </strong> {{ticket.comments|safe}}</p>
+
+                  {% endif %}
+                  <p>
+                        Sent at : {{ send_time }}
+                  </p>
+            </div>
+            <div class="signature">
+                  <p><em>Best Regards,</em></p>
+                  <p><em>InfraLinker</em></p>
+            </div>
+      </div>
+</body>
+
+</html>
