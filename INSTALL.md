@@ -56,7 +56,7 @@ SELINUX=disabled
 ### 7. python3.8 installation
 
 ```bash
-$sudo yum install -y  python38 python3-pip git gcc gcc-c++  python38-devel  python3-virtualenv  zlib-devel  libjpeg-devel  python3-wheel (For python  Pillow Library)
+$sudo yum install -y  python38 python3-pip git gcc gcc-c++  python38-devel  python3-virtualenv  zlib-devel  libjpeg-devel  python3-wheel
 ```
 >NB : DO NOT install python-virtualenv
 
@@ -82,7 +82,7 @@ $sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/priva
 
 ### 11. Installing the  program
 change the admin_db password in this two files
-install.sh and instance/config.py
+install.sh (line 41) and nginx-conf/infralinkerd.service (line 14)
 
 ```bash
 $cd /home/infralinker
