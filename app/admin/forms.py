@@ -80,6 +80,7 @@ class AdminRegistrationForm(FlaskForm):
     """
     CREATION OF ADMIN COUNTS
     """
+    csrf = True 
     firstname = StringField('FIRSTNAME :', validators=[DataRequired(), Alpha()])
     lastname = StringField('LASTNAME :', validators=[DataRequired(),  Alpha()])
     email = StringField('E-MAIL :', validators=[DataRequired(), Email()])

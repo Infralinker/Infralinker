@@ -38,7 +38,7 @@ echo "Creating database and user..."
 # Login to MySQL database and create database, user, and grant privileges
 mysql -h $db_host -u $db_root_user -p$db_password << EOF
 CREATE DATABASE IF NOT EXISTS infralinker_db;
-CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'password';
+CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'admin_db_password';
 GRANT ALL PRIVILEGES ON infralinker_db.* TO 'admin_db'@'localhost';
 exit
 EOF
@@ -83,9 +83,6 @@ else
     echo "File '$key_file' does not exist."
 fi
 
-# echo "Installing PyConcrete..."
-# PYCONCRETE_PASSPHRASE="$key_content" pip install pyconcrete
-
 echo "Exporting ENVs..."
 source export.sh
 
@@ -95,12 +92,6 @@ flask db migrate
 flask db upgrade
 
 deactivate
-
-# Connect to MySQL database and insert initial data
-# read -p "Enter DB Server IP or Hostname: " db_host
-# read -p "Enter the root user: " db_root_user
-# read -s -p "Enter the root password: " db_password
-# echo ""
 
 mysql -h $db_host -u $db_root_user -p$db_password << "EOF"
 use infralinker_db;
