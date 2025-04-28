@@ -65,3 +65,16 @@ InfraLinker was built specifically to serve the needs of IT engineers and operat
 ![InfraLinker big Logo](images/global-dashboard.png)
 ![InfraLinker big Logo](images/sp-dashboard.png)
 ![InfraLinker big Logo](images/ip-management.png)
+
+## 🤝 Contributing ##
+
+Contributions are welcome! Here’s how you can help:
+- Fix bugs
+- Add new features
+- Improve the documentation
+
+Please make sure to read [CONTRIBUTING.md](./CONTRIBUTING.md) before getting started.
+
+If you’re a beginner, look for issues labeled **good first issue**.
+
+Feel free to open an issue for any suggestion! 🚀
