@@ -257,7 +257,7 @@ def edit_supplier(id):
 
 
         db.session.commit()
-        flash('Saved successfully.', 'success')
+        flash('Edited Supplier Saved successfully.', 'success')
         change_log('Supplier', 'Edit', supplier.id, supplier.company_name)
 
         # redirect to the suppliers page
@@ -415,7 +415,7 @@ def edit_contact(id):
 
         db.session.commit()
         change_log("Contact","Edit" , contact.id, contact.firstname +" "+ contact.lastname)
-        flash('Saved successfully.', 'success')
+        flash('Edited Contact Saved successfully.', 'success')
 
         # redirect to the fournisseurs page
         # return redirect(url_for('auth.list_contacts'))
@@ -609,7 +609,7 @@ def edit_ticket(id):
 
         else :
 
-            flash('Saved successfully.', 'success')
+            flash('Edited Ticket Saved successfully.', 'success')
         
         db.session.commit()
         change_log("Ticket","Edit" , ticket.id, ticket.ticket_number)
@@ -756,7 +756,7 @@ def edit_intervention(id):
         intervention.contact = form.contact.data
 
         db.session.commit()
-        flash('Saved successfully.', 'success')
+        flash('Task Saved successfully.', 'success')
 
         # redirect to the fournisseurs page
         return redirect(url_for('auth.list_tickets'))
@@ -885,7 +885,7 @@ def edit_action(id):
         action.finish_date = form.finish_date.data
 
         db.session.commit()
-        flash('Saved successfully.', 'success')
+        flash('Action Saved successfully.', 'success')
 
         # redirect to the fournisseurs page
         return redirect(url_for('auth.list_actions', project_id=action.project_id))
@@ -981,7 +981,7 @@ def edit_tag(id):
         tag.tag_color = form.tag_color.data
 
         db.session.commit()
-        flash('Saved successfully.', 'success')
+        flash('Tag Saved successfully.', 'success')
         change_log('Tag', 'Edit', tag.id, tag.tag_name)
         return redirect(url_for('auth.tags_list'))
 

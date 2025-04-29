@@ -34,6 +34,7 @@ def mydc_db_connexion():
 
 mydb = mydc_db_connexion()
 
+
 def check_admin():
     """
     Prevent non-admins from accessing the page
@@ -125,7 +126,7 @@ def new_admin():
 
         db.session.add(admin)
         db.session.commit()
-        flash('You have successfully registered the Admin user! You may now login.')
+        flash('You have successfully registered the new user!')
         
         change_log('User', 'New', admin.id, admin.firstname +" "+ admin.lastname )
 
@@ -171,7 +172,7 @@ def delete_admin(id):
     admin = Admin.query.get_or_404(id)
     db.session.delete(admin)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('User Deleted successfully.', 'danger')
     change_log('User', 'Delete', admin.id, admin.firstname +" "+ admin.lastname )
     return redirect(url_for('admin.list_admins'))
 
@@ -210,7 +211,7 @@ def edit_admin(id):
         admin.change_password = form.change_password.data
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited User Saved successfully!')
         change_log('User', 'Edit', admin.id, admin.firstname +" "+ admin.lastname )
 
         # redirect to the admins page
@@ -401,7 +402,7 @@ def new_datacenter():
 
         db.session.add(datacenter)
         db.session.commit()
-        flash('You have successfully add new datacenter.')
+        flash('You have successfully add new DataCenter.')
 
         # redirect to the login page
         return redirect(url_for('admin.list_datacenters'))
@@ -436,7 +437,7 @@ def delete_datacenter(id):
     datacenter = Datacenter.query.get_or_404(id)
     db.session.delete(datacenter)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('DataCenter Deleted successfully.', 'danger')
 
     return redirect(url_for('admin.list_datacenters'))
     
@@ -462,7 +463,7 @@ def edit_datacenter(id):
         datacenter.dc_phone = form.dc_phone.data
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('DataCenter Edited successfully.')
 
         # redirect to the admins page
         return redirect(url_for('admin.list_datacenters'))
@@ -544,7 +545,7 @@ def delete_rack(id):
     rack = Rack.query.get_or_404(id)
     db.session.delete(rack)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Rack Deleted successfully.', 'danger')
     change_log('Rack', 'Delete', rack.id, rack.r_name)
 
     return redirect(url_for('admin.list_racks'))
@@ -573,7 +574,7 @@ def edit_rack(id):
         rack.r_notes = form.r_notes.data.capitalize()
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Rack Saved successfully!')
         change_log('Rack', 'Edit', rack.id, rack.r_name)
 
         # redirect to the admins page
@@ -633,7 +634,7 @@ def new_platform():
             # add platform to the database
             db.session.add(platform)
             db.session.commit()
-            flash('You have successfully added a new platform.')
+            flash('You have successfully added a new Device !')
             change_log('Platform/Device', 'New', platform.id, platform.platform_name)
         
         except Exception as e:
@@ -685,7 +686,7 @@ def new_platform_from_rack(id_rack):
             # add platform to the database
             db.session.add(platform)
             db.session.commit()
-            flash('You have successfully added a new platform.')
+            flash('You have successfully added a new Device.')
             change_log('Platform/Device', 'New', platform.id, platform.platform_name)
         
         except Exception as e:
@@ -753,7 +754,7 @@ def edit_platform(id):
         platform.notes = form.notes.data.capitalize()
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Device Saved successfully!')
         change_log('Platform/Device', 'Edit', platform.id, platform.platform_name)
 
         return redirect(url_for('admin.rack_overview', id=form.rack.data.id))
@@ -801,7 +802,7 @@ def delete_platform(id):
     platform = Platform.query.get_or_404(id)
     db.session.delete(platform)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Device Deleted successfully.', 'danger')
     change_log('Platform/Device', 'Delete', platform.id, platform.platform_name)
 
     
@@ -819,7 +820,7 @@ def platform_details(id):
     return render_template('admin/platforms/platform_details.html', 
     get_tag_color=get_tag_color, platform=platform, get_UserName=get_UserName, tickets=tickets,
     check_expiration_date=check_expiration_date,
-    title="SHOW platform DETAILS")
+    title="SHOW DEVICE DETAILS")
 ############################################
 ####  RACKS OVERVIEWS AND DETAILS ##########
 ############################################
@@ -948,7 +949,7 @@ def edit_device_role(id):
         device_role.device_color = form.device_color.data
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Device role Saved successfully!')
         change_log('DeviceRole', 'Edit', device_role.id, device_role.name)
         return redirect(url_for('admin.devices_role_list'))
 
@@ -981,7 +982,7 @@ def delete_device_role(id):
     device_role = Device_Role.query.get_or_404(id)
     db.session.delete(device_role)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Device role Deleted successfully.', 'danger')
     change_log('DeviceRole', 'Delete', device_role.id, device_role.name)
 
     
@@ -1072,7 +1073,7 @@ def edit_network(id):
         network.net_notes = form.net_notes.data.capitalize()
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Network Saved successfully!')
         change_log('Network', 'Edit', network.id, network.net_name)
 
         
@@ -1109,7 +1110,7 @@ def delete_network(id):
     network = Network.query.get_or_404(id)
     db.session.delete(network)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Network Deleted successfully.', 'danger')
     change_log('Network', 'Delete', network.id, network.net_name)
 
     
@@ -1265,7 +1266,7 @@ def edit_server(id):
         try:
             db.session.add(server)
             db.session.commit()
-            flash('Saved successfully.')
+            flash('Edited IP Saved successfully!')
             change_log('Server/IP', 'Edit', server.id, server.server_name)
 
         except Exception as e:
@@ -1302,7 +1303,7 @@ def delete_server(id):
     server = Server.query.get_or_404(id)
     db.session.delete(server)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('IP Deleted successfully.', 'danger')
     change_log('Server/IP', 'Delete', server.id, server.server_name)
 
     return redirect(url_for('admin.list_servers'))
@@ -1408,7 +1409,7 @@ def edit_vulnerability(id):
         vulnerability.recommanded_solution = form.recommanded_solution.data.capitalize()
 
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Vulnerability  Saved successfully!')
         change_log('Vulnerability', 'Edit', vulnerability.id, vulnerability.title_vulnerability)
 
         
@@ -1438,7 +1439,7 @@ def delete_vulnerability(id):
     vulnerability = Vulnerability.query.get_or_404(id)
     db.session.delete(vulnerability)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Vulnerability Deleted successfully.', 'danger')
     change_log('Vulnerability', 'Delete', vulnerability.id, vulnerability.title_vulnerability)
 
     return redirect(url_for('admin.list_vulnerabilities'))
@@ -1567,7 +1568,7 @@ def edit_project(id):
                 pass
             
         else :
-            flash('Saved successfully.')
+            flash('Edited Project Saved successfully!')
 
         db.session.commit()
         change_log('Project', 'Edit', project.id, project.project_name)
@@ -1612,7 +1613,7 @@ def delete_project(id):
     project = Project.query.get_or_404(id)
     db.session.delete(project)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Project Deleted successfully.', 'danger')
     change_log('Project', 'Delete', project.id, project.project_name)
 
     
@@ -1786,7 +1787,7 @@ def edit_contract(id):
         else:
             pass
         db.session.commit()
-        flash('Saved successfully.')
+        flash('Edited Contract Saved successfully!')
         change_log('Contract', 'Edit', contract.id, contract.contract_number)
 
         return redirect(url_for('admin.list_contracts'))
@@ -1926,7 +1927,7 @@ def edit_application(id):
 
         db.session.commit()
         change_log('Application', 'Edit', application.id, application.app_name)
-        flash('Saved successfully.')
+        flash('Edited Application Saved successfully!')
 
         return redirect(url_for('admin.list_applications'))
 
@@ -1955,7 +1956,7 @@ def delete_application(id):
     change_log('Application', 'Delete', application.id, application.app_name)
     db.session.delete(application)
     db.session.commit()
-    flash('Deleted successfully.', 'danger')
+    flash('Application Deleted successfully.', 'danger')
 
     return redirect(url_for('admin.list_applications'))
     
@@ -1984,7 +1985,7 @@ def settings_config():
             egroup_contract = form.egroup_contract.data)
             db.session.add(smtp_config)
             db.session.commit()
-            flash('Saved successfully.')
+            flash('Config Saved successfully!')
             return redirect(url_for('home.admin_dashboard'))
 
         return render_template('admin/settings/settings.html',form=form,title="Edit Settings")
@@ -1998,7 +1999,7 @@ def settings_config():
             smtp_config.egroup_ticket = form.egroup_ticket.data
             smtp_config.egroup_contract = form.egroup_contract.data
             db.session.commit()
-            flash('Saved successfully.')
+            flash('Edited Config Saved successfully!')
             
             return redirect(url_for('home.admin_dashboard'))
 
