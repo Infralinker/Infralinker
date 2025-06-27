@@ -63,5 +63,7 @@ Werkzeug==2.0.3
 WTForms==3.0.0
 WTForms-SQLAlchemy==0.3
 wtforms-validators==1.0.0
-zipp==3.6.0
+zipp==3.19.1
 zstandard==0.20.0
+setuptools>=78.1.1 # not directly required, pinned by Snyk to avoid a vulnerability
+wheel>=0.38.0 # not directly required, pinned by Snyk to avoid a vulnerability
