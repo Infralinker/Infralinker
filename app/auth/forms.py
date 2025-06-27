@@ -124,7 +124,7 @@ class TicketForm(FlaskForm):
         ('CANCELED ','CANCELED')])
 
     resolution_date = HiddenField("""RESOLUTION DATE:""",render_kw={"placeholder": "01-12-2020"})
-    comments = TextAreaField("""OBSERVATION :""", render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote1', 'placeholder' : 'editordata'}) 
+    comments = TextAreaField("""OBSERVATION :""", render_kw={'class': 'form-control', 'rows': 5, 'id' : 'second_summernote', 'placeholder' : 'editordata'}) 
     submit = SubmitField('SAVE')
 
     
