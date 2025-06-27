@@ -17,6 +17,7 @@ Edit Rack
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+
 <div class="content-section">
 <br />
   <div class="center">
@@ -29,7 +30,9 @@ Edit Rack
                     {% endif %}<a href="javascript:history.back()" class="btn btn-outline-danger btn-sm float-end">CANCEL</a></strong>
             </div>
             <div class="card-body">
+              <div class="summernote">
               {{ render_form(form, button_style='success', button_size='block') }}
+              </div>
             </div>
         </div>
     </div>

@@ -15,14 +15,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from config import app_config
 from flask_compress import Compress
-
 from flask_wtf.csrf import CSRFProtect
-from flask_ckeditor import CKEditor
+
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
 login_manager = LoginManager()
-ckeditor = CKEditor()
 mail = Mail()
 compress = Compress()
 
@@ -43,7 +41,6 @@ def create_app(config_name):
     db.init_app(app)
     mail.init_app(app)
     csrf.init_app(app)
-    ckeditor.init_app(app)
     compress.init_app(app)
     
     login_manager.init_app(app)

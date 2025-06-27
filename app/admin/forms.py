@@ -10,17 +10,15 @@ This is Form file.
 """
 
 from flask_wtf import FlaskForm
-from flask import  current_app, flash
-from wtforms import StringField, SubmitField, IntegerField, RadioField, TextAreaField,ValidationError, SelectField, BooleanField, SelectMultipleField, DateTimeField, HiddenField, PasswordField, FileField
+from flask import  current_app
+from wtforms import StringField, SubmitField, IntegerField, TextAreaField,ValidationError, SelectField, BooleanField, HiddenField, PasswordField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo , InputRequired, IPAddress
-from wtforms_validators import AlphaDash, AlphaSpace, Alpha, ValidationError
-from datetime import datetime, date
+from wtforms_validators import Alpha, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
-from ..models import Admin, Supplier, ProjectDocuments, Contract,Device_Role, Ticket, Platform, Vulnerability,Tag, Intervention, Project, Action, Contact,Datacenter, Rack, Select2MultipleField, Network, Server, Department
+from ..models import Admin, Supplier, ProjectDocuments, Contract,Device_Role, Ticket, Platform, Project, Datacenter, Rack, Network, Server, Department
 from ..library.ip_calculator import check_ip_in_network_by_id
 from wtforms.fields import DateField, TelField
-from flask_ckeditor import CKEditorField
-import re
+
 __author__ = 'Abdellah ALAOUI ISMAILI'
 __version__ = '1.0.1'
 
@@ -194,7 +192,7 @@ class RackForm(FlaskForm):
     installation_date = DateField("INSTALLATION DATE", validators=[DataRequired()], render_kw={"placeholder":"dd-mm-yyyy", "class":"form-control"})
     datacenter = QuerySelectField('RACK LOCATION :', allow_blank=True, query_factory=lambda: Datacenter.query.all(), get_label="dc_name")
     tags = StringField('TAGS :', render_kw= {"class":"form-control", "id":"tags"})
-    r_notes = CKEditorField('NOTES :', render_kw={'class': 'form-control', 'rows': 5})
+    r_notes = TextAreaField('NOTES :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     submit = SubmitField('SAVE')
 
     def validate_rack(self, field):
@@ -219,7 +217,7 @@ class PlatformForm(FlaskForm):
     network_identity = StringField('NETWORK IDENTITY (IP/MAC) :')
     contract = QuerySelectField('MAINTENANCE CONTRACT  :', allow_blank=True, query_factory=lambda: Contract.query.all(), get_label=get_contract_info_label)
     tags = StringField('TAGS :', render_kw= {"class":"form-control", "id":"tags"})
-    notes = CKEditorField('NOTES :', render_kw={'class': 'form-control', 'rows': 5})
+    notes = TextAreaField('NOTES :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     submit = SubmitField('SAVE')
 
 class PlatformRackForm(FlaskForm):
@@ -239,7 +237,7 @@ class PlatformRackForm(FlaskForm):
     network_identity = StringField('NETWORK IDENTITY (IP/MAC) :')
     contract = QuerySelectField('MAINTENANCE CONTRACT  :', allow_blank=True, query_factory=lambda: Contract.query.all(), get_label=get_contract_info_label)
     tags = StringField('TAGS :', render_kw= {"class":"form-control", "id":"tags"})
-    notes = CKEditorField('NOTES :', render_kw={'class': 'form-control', 'rows': 5})
+    notes = TextAreaField('NOTES :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     submit = SubmitField('SAVE')
 
 class NetworkForm(FlaskForm):
@@ -296,7 +294,7 @@ class ServerForm(FlaskForm):
     platform = QuerySelectField('IS PART OF DEVICE :', allow_blank=True, query_factory=lambda: Platform.query.all(), get_label="platform_name")
     department = QuerySelectField('INTERNAL OWNER :', allow_blank=True, query_factory=lambda: Department.query.all(), get_label="name")
     project = QuerySelectField('IS PART OF PROJECT  :', allow_blank=True, query_factory=lambda: Project.query.all(), get_label="project_name")
-    notes = CKEditorField('NOTES :', render_kw={'class': 'form-control', 'rows': 5})
+    notes = TextAreaField('NOTES :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     tags = StringField('TAGS :', render_kw= {"class":"form-control", "id":"tags"})
     
     applications_list = StringField('APPLICATIONS : ', render_kw = {"class":"form-control",  "id":"apps_name"})
@@ -340,7 +338,7 @@ class ServerNetworkForm(FlaskForm):
     platform = QuerySelectField('IS PART OF DEVICE :', allow_blank=True, query_factory=lambda: Platform.query.all(), get_label="platform_name")
     department = QuerySelectField('INTERNAL OWNER DEPARTEMENT :', allow_blank=True, query_factory=lambda: Department.query.all(), get_label="name")
     project = QuerySelectField('IS PART OF PROJECT  :', allow_blank=True, query_factory=lambda: Project.query.all(), get_label="project_name")
-    notes = CKEditorField('NOTES :', render_kw={'class': 'form-control', 'rows': 5})
+    notes = TextAreaField('NOTES :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     tags = StringField('TAGS :', render_kw= {"class":"form-control", "id":"tags"})
     
     applications_list = StringField('APPLICATIONS : ', render_kw = {"class":"form-control",  "id":"apps_name"})
@@ -370,10 +368,10 @@ class VulnerabilityForm(FlaskForm):
         ("TOLERABLE","TOLERABLE"),
         ("UNDESIRABLE","UNDESIRABLE"),
         ("INTOLERABLE","INTOLERABLE")])
-    impact = CKEditorField('IMPACT NOTES:', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 8})
+    impact = TextAreaField('IMPACT NOTES:', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 8, 'id' : 'summernote', 'placeholder' : 'editordata'})
     ticket = QuerySelectField('TICKET ID :',allow_blank=True, query_factory=lambda: Ticket.query.all(), get_label="ticket_number")
     admin = QuerySelectField('SUPPORTED BY :',allow_blank=True,query_factory=lambda: Admin.query.all(), get_label=get_admin_complet_name_label)
-    recommanded_solution = CKEditorField('RECOMMANDATIONS :', render_kw={'class': 'form-control', 'rows': 5})
+    recommanded_solution = TextAreaField('RECOMMANDATIONS :', render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     
     submit = SubmitField('SAVE')
 
@@ -382,7 +380,7 @@ class ProjectForm(FlaskForm):
     PROJECT FORMULAIRE
     """
     project_name = StringField('PROJECT NAME :', validators=[DataRequired()])
-    description = CKEditorField('PROJCET DESCRIPTION :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5})
+    description = TextAreaField('PROJCET DESCRIPTION :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     admin = QuerySelectField('RESPONSABL NAME :',query_factory=lambda: Admin.query.all(), get_label=get_admin_complet_name_label)
     affectation_date = DateField('AFFECTATION DATE  :', validators=[DataRequired()], render_kw={"placeholder": "dd-mm-yyyy"})
     members = StringField('PROJECT INTERNAL MEMBERS NAME :', render_kw= {"class":"form-control", "id":"members"})
@@ -420,7 +418,7 @@ class ContractForm(FlaskForm):
     start_date = DateField('START DATE  :', validators=[DataRequired()], render_kw={"placeholder": "dd-mm-yyyy"})
     end_date = DateField('END DATE  :', validators=[DataRequired()], render_kw={"placeholder": "dd-mm-yyyy"})
     contract_document = FileField('UPLOADE CONTRACT DOCUMENT :')
-    notes = CKEditorField('CONTRACT NOTES :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5})
+    notes = TextAreaField('CONTRACT NOTES :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     supplier = QuerySelectField('SUPPLIER NAME :', allow_blank=True, query_factory=lambda: Supplier.query.all(), get_label="company_name")
     submit = SubmitField('SAVE')
 

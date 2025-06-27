@@ -10,14 +10,13 @@ Auth Form
 """
 
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, ValidationError, BooleanField, SelectField, TextAreaField, DateTimeField, HiddenField,SelectMultipleField, DateField
+from wtforms import PasswordField, StringField, SubmitField, ValidationError, SelectField, TextAreaField, HiddenField,DateField
 from datetime import datetime
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms_sqlalchemy.fields import QuerySelectField
-from wtforms import widgets
-from ..models import Admin, Supplier, Ticket, Platform, Vulnerability, Intervention, Project, Action, Contact, Select2MultipleField
-from wtforms.fields import DateField, TelField
-from flask_ckeditor import CKEditorField
+from ..models import Admin, Supplier, Ticket, Platform, Contact
+from wtforms.fields import DateField
+
 
 def get_complet_name_label(user):
     return f"{user.firstname} {user.lastname}"
@@ -82,7 +81,7 @@ class SupplierForm(FlaskForm):
     address = StringField('COMPANY ADDRESS :',validators=[DataRequired()])
     city = StringField('CITY :', validators=[DataRequired()])
     phone = StringField('PHONE :', validators=[DataRequired()])
-    notes = CKEditorField('NOTES :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 7})
+    notes = TextAreaField('NOTES :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 7, 'id' : 'summernote', 'placeholder' : 'editordata'})
     submit = SubmitField('SAVE')
 
 class ContactForm(FlaskForm):
@@ -104,7 +103,7 @@ class TicketForm(FlaskForm):
     origin_ticket_number = HiddenField()
     ticket_number = StringField('TICKET NUMBER :', validators=[DataRequired()])
     open_date = DateField("""OPEN DATE :""", default=datetime.today, validators=[DataRequired()], render_kw={"placeholder": "Ex : 01-12-2020"})
-    description = CKEditorField("""DESCRIPTION :""", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5})
+    description = TextAreaField("""DESCRIPTION :""", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     supplier = QuerySelectField('SUPPLIER :',query_factory=lambda: Supplier.query.all(), get_label="company_name")
     platform = QuerySelectField('DEVICE :',query_factory=lambda: Platform.query.all(), get_label="platform_name")
     admin = HiddenField('PERSON IN CHARGE :')
@@ -125,7 +124,7 @@ class TicketForm(FlaskForm):
         ('CANCELED ','CANCELED')])
 
     resolution_date = HiddenField("""RESOLUTION DATE:""",render_kw={"placeholder": "01-12-2020"})
-    comments = CKEditorField("""OBSERVATION :""", render_kw={'class': 'form-control', 'rows': 5} )
+    comments = TextAreaField("""OBSERVATION :""", render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote1', 'placeholder' : 'editordata'}) 
     submit = SubmitField('SAVE')
 
     
@@ -139,13 +138,13 @@ class InterventionForm(FlaskForm):
     INTERVENTION FORMULAIRE
     """
     intervention_date = DateField('INTERVENTION DATE :',default=datetime.today, validators=[DataRequired()], render_kw={"placeholder": "Ex : 01-12-2020"}) 
-    comment = CKEditorField('DESCRIPTION :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 7})
+    comment = TextAreaField('DESCRIPTION :', validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 7, 'id' : 'summernote', 'placeholder' : 'editordata'})
     admin = QuerySelectField('INTERNAL COLLABORATOR :',allow_blank=True, query_factory=lambda: Admin.query.all(), get_label= get_complet_name_label)
     contact = QuerySelectField('EXTERNAL COLLABORATOR :',allow_blank=True, query_factory=lambda: Contact.query.all(), get_label=get_complet_name_label)
     submit = SubmitField('SAVE')
 
 class Add_Note_vunerability(FlaskForm):
-    vulnerabitlity_note = CKEditorField("", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5})
+    vulnerabitlity_note = TextAreaField("", validators=[DataRequired()], render_kw={'class': 'form-control', 'rows': 5, 'id' : 'summernote', 'placeholder' : 'editordata'})
     submit = SubmitField('SAVE')
 
 class ActionForm(FlaskForm):
