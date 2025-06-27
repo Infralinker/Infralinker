@@ -9,9 +9,7 @@
 {% block title %}ADD NEW SUPPLIER{% endblock %}
 
 {% block body %}
-
 <div class="content-section">
-
     <div class="center">
         <div class="card border-dark">
             <div class="card-header">
@@ -23,9 +21,32 @@
             </div>
             {{ form.csrf_token() }}
             <div class="card-body">
+                <div class="summernote">
                 {{ render_form(form, button_style='success', button_size='block') }}
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#summernote').summernote(
+        {   
+            //airMode: true,
+            tabsize: 2,
+            height: 120,
+            codemirror: { 
+                theme: 'monokai'
+            }, 
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline']],                
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']]
+]
+        }
+    );
+});
+</script>
 {% endblock %}

@@ -26,14 +26,35 @@ Edit intervention
         <a href="javascript:history.back()" class="btn btn-outline-danger btn-sm float-end">CANCEL</a></strong>
             </div>
             <div class="card-body" style="font-size:20px;">
-        {# <form class="form-horizontal" method="post"> #}
+        <div class="summernote">
             {{ form.csrf_token() }}
             <fieldset>
                 {{ render_form(form, button_style='success', button_size='block') }}
             </fieldset>
-        {# </form> #}
+        </div>
     </div>
     </div>
 </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#summernote').summernote(
+        {   
+            //airMode: true,
+            tabsize: 2,
+            height: 120,
+            codemirror: { 
+                theme: 'monokai'
+            }, 
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline']],                
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']]
+]
+        }
+    );
+});
+</script>
 {% endblock %}

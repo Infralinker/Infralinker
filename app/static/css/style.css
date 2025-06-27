@@ -229,6 +229,13 @@ label,
     background-color: #333; /* Optional: Change background color for better contrast */
 }
 
+.summernote .dropdown-menu {
+    background-color: #ffffff;
+}
+.summernote .dropdown-item {
+    color: rgb(0, 0, 0) !important; /* Force black text color on summernote editor */
+}
+
 .dropdown-item {
     color: white !important; /* Force white text color */
 }

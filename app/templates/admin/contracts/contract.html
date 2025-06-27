@@ -21,6 +21,7 @@
                 </strong>
             </div>
             <div class="card-body">
+                <div class="summernote">
                 <br />
                 {% if not current_user.control_contracts and not current_user.is_admin %}
                 <fieldset disabled="disabled">
@@ -29,7 +30,7 @@
                     {% endif %}
                     {{ render_form(form, button_style='success', button_size='block') }}
             </fieldset>
-            </div>
+            </div></div>
         </div>
     </div>
 </div>
