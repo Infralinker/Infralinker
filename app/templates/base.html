@@ -57,8 +57,8 @@
                     </a>
                   </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('cloud') }} - ASSETS</a>
+                <li class="nav-item dropdown">                    
+                    <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('cloud') }} - ASSETS</button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="{{ url_for('admin.list_datacenters') }}">{{ render_icon('buildings') }}  - DATACENTERS </a>
                         <div class="dropdown-divider"></div>
@@ -72,7 +72,7 @@
                     </div>
                   </li>
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('gpu-card') }} - MANAGEMENTS<span class="caret"></span></a>
+                    <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('gpu-card') }} - MANAGEMENTS<span class="caret"></span></button>
                     <div class="dropdown-menu">
                     <a class="dropdown-item" href="{{ url_for('auth.list_tickets') }}">{{ render_icon('ticket-detailed') }} - TICKETS </a>
                     <a class="dropdown-item" href="{{ url_for('admin.list_vulnerabilities') }}">{{ render_icon('bug') }} - VULNERABILITIES </a>
@@ -103,7 +103,7 @@
 
                 {% endif %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('person-square') }} Hi, {{ current_user.firstname }}! <span class="caret"></span></a>
+                    <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">{{ render_icon('person-square') }} Hi, {{ current_user.firstname }}! <span class="caret"></span></button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="{{ url_for('auth.edit_end_user', id=current_user.id) }}">{{ render_icon('pencil-square') }} - EDIT PROFIL</a>
                       <div class="dropdown-divider"></div>
