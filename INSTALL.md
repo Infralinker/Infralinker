@@ -9,19 +9,24 @@ The installation instructions provided here have been tested to work on Rocky Li
 > CPU : 2
 > DISQ : 50Gb
 ```
-### 2. packages Requirements
+### 2. Packages Requirements
 ```
 dependency - minimum version
-Python  - 3.8 >
-MariaDB -  5.5 >
+Python  - 3.10 >
+MariaDB -  Last
 Nginx - Last
 ```
-### 3. update Packages and installation epel
+### 3. Update Packages and installation
+**RPM Based OS**
 ```bash
 $sudo yum update
 $sudo yum install epel-release
 ```
-### 4. create A new user
+**DEB Based OS**
+```bash
+$sudo apt update
+```
+### 4. Create a new user
 
 ```bash
 $su - #to access with root user
@@ -31,9 +36,10 @@ $gpasswd -a infralinker wheel  #to add infralinker to sudo users
 ```
 
 ### 5. lock Down the firewall
+**ALLOW INCOMING CONNECTIONS ON WEB PORTS USING HTTPS ONLY**
 
+**RPM Based OS**
 ```bash
-#ALLOW INCOMING CONNECTIONS ON WEB PORTS USING HTTPS ONLY
 $su -
 $export WHITELIST_IPADDR=0.0.0.0
 $systemctl enable firewalld
@@ -42,8 +48,16 @@ $firewall-cmd --zone=public --add-service=https --permanent
 $firewall-cmd --zone=trusted --add-source=${WHITELIST_IPADDR} --permanent
 $firewall-cmd --reload
 ```
+**DEB Based OS**
+```bash
+$export WHITELIST_IPADDR=0.0.0.0
+$sudo ufw enable
+$sudo ufw allow https
+$sudo ufw allow from ${WHITELIST_IPADDR}
+$sudo ufw reload
+```
 
-### 6. disable Or configure selinux
+### 6. Disable Or configure selinux
 ```bash
 $setenforce 0 #to disable selinux 
 
@@ -53,37 +67,44 @@ $sudo vi /etc/selinux/conf
 SELINUX=disabled
 ```
 
-### 7. python3.8 installation
-
+### 7. python and installation
+**RPM Based OS**
 ```bash
-$sudo yum install -y  python38 python3-pip git gcc gcc-c++  python38-devel  python3-virtualenv  zlib-devel  libjpeg-devel  python3-wheel
+$sudo yum install -y  python3.11 python3-pip git gcc gcc-c++  python3.11-devel  zlib-devel  libjpeg-devel
 ```
->NB : DO NOT install python-virtualenv
 
-### 8. mariadb 5.5 installation and activation
+**DEP Based OS**
+```bash
+$sudo apt install python3-pip git gcc g++ python3-dev python3-venv zlib1g-dev libjpeg-dev python3-wheel
+```
+### 8. mariadb installation and activation
 ```bash
 $sudo yum install mariadb-server
 $sudo systemctl start mariadb
 $sudo systemctl enable mariadb
-$sudo mysql_secure_installation #TO EDIT ROOT PASSWORD
+$sudo mariadb-secure-installation  #TO EDIT ROOT PASSWORD
 ```
 
 ### 9. nginx Installation
+**RPM Based OS**
 ```bash
 $sudo yum install nginx
 ```
-
+**DEB Based OS**
+```bash
+$sudo apt install nginx
+```
 ### 10. Gen ssl certification for https connexion
 ```bash
-$sudo dnf update openssl
+$sudo dnf/apt update openssl
 $sudo mkdir /etc/ssl/private
 $sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
 ```
 
 ### 11. Installing the  program
-change the admin_db password in this two files
+Change the **admin_db** password in this two files.
 
-install.sh (line 41) and nginx-conf/infralinkerd.service (line 14)
+install.sh **(line 41)**, export.sh **(line 7)** and nginx-conf/infralinkerd.service **(line 14)**
 
 ```bash
 $cd /home/infralinker

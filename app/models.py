@@ -34,7 +34,7 @@ class Admin(UserMixin, db.Model):
     email = db.Column(db.String(60), index=True, unique=True)
     phone =  db.Column(db.String(20), index=True, unique=True)
     function = db.Column(db.String(100), index=True)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(512), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, index=True)
     is_manager = db.Column(db.Boolean, default=False, index=True) #If user is manager he can create his own projects (only project)
     control_racks = db.Column(db.Boolean, default=False, index=True) #Can add or remove racks
