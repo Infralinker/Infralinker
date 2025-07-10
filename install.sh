@@ -4,26 +4,6 @@
 # Author: Abdellah ALAOUI ISMAILI
 # Version: 1.0.1
 
-# Function to print progress bar
-print_progress() {
-    local current="$1"
-    local total="$2"
-    local length=50
-    local percentage=$((current * 100 / total))
-    local completed=$((percentage * length / 100))
-    local remaining=$((length - completed))
-    printf "["
-    printf "%${completed}s" | tr ' ' '='
-    printf "%${remaining}s" | tr ' ' '-'
-    printf "] %d%%\r" "$percentage"
-}
-
-# Function to check if a package is installed using rpm (Red Hat-based systems)
-is_package_installed_rpm() {
-    local package_name="$1"
-    rpm -q "$package_name" >/dev/null 2>&1
-}
-
 echo "###################################################################"
 echo "### BEFORE STARTING, YOU MUST HAVE IP OR HOSTNAME OF YOUR SERVER ##"
 echo "########## YOU MUST HAVE ROOT USER AND ROOT PASSWORD    ########"
@@ -38,28 +18,11 @@ echo "Creating database and user..."
 # Login to MySQL database and create database, user, and grant privileges
 mysql -h $db_host -u $db_root_user -p$db_password << EOF
 CREATE DATABASE IF NOT EXISTS infralinker_db;
-CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'admin_db_password';
+CREATE USER IF NOT EXISTS 'admin_db'@'localhost' IDENTIFIED BY 'admin_db_passwd';
 GRANT ALL PRIVILEGES ON infralinker_db.* TO 'admin_db'@'localhost';
+FLUSH PRIVILEGES;
 exit
 EOF
-
-echo "Checking installed dependencies..."
-# List of packages to check
-packages=("python38" "python3-pip" "git" "gcc" "gcc-c++" "python38-devel" "python3-virtualenv" "zlib-devel" "libjpeg-devel" "python3-wheel")
-
-# Check for package installation
-progress_count=0
-total_packages=${#packages[@]}
-for package in "${packages[@]}"; do
-    if is_package_installed_rpm "$package"; then
-        echo "Package '$package' is installed."
-    else
-        echo "Package '$package' is NOT installed."
-    fi
-    ((progress_count++))
-    print_progress "$progress_count" "$total_packages"
-done
-echo ""
 
 echo "Creating a new virtual environment..."
 python3 -m venv $HOME/infralinker_venv
@@ -69,20 +32,8 @@ echo "Upgrading pip to the latest version..."
 pip install --upgrade pip
 
 echo "Installing required packages from requirements.txt..."
-pip install -r requirements.txt
-pip install wheel
-
-key_file="key.key"
-if [ -f "$key_file" ]; then
-    if [ -s "$key_file" ]; then
-        key_content=$(<"$key_file")
-    else
-        echo "File '$key_file' exists but is empty."
-    fi
-else
-    echo "File '$key_file' does not exist."
-fi
-
+#pip install -r requirements.txt
+pip install $(sed 's/[<>=!].*//' requirements.txt)
 echo "Exporting ENVs..."
 source export.sh
 

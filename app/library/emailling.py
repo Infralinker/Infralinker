@@ -10,13 +10,13 @@ app = Flask(__name__)
 
 mail = Mail(app)
 
-def async(f):
+def run_async(f):
     def wrapper(*args, **kwargs):
         thr = Thread(target = f, args = args, kwargs = kwargs)
         thr.start()
     return wrapper
 
-@async
+@run_async
 def send_async_email(msg):
    with app.app_context():
       mail.send(msg)
