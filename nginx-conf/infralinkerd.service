@@ -6,13 +6,13 @@ After=network.target
 User=infralinker
 Group=infralinker
 WorkingDirectory=/home/infralinker/infralinker
-Environment="PATH=/home/infralinker/infralinker_venv/bin"
+Environment="PATH=/home/infralinker/infralinker/.venv/bin"
 Environment="FLASK_APP=/home/infralinker/infralinker/run.py"
 Environment="FLASK_CONFIG=development"
 Environment="PYTHONDONTWRITEBYTECODE=abc"
 Environment="MYSQL_USER=admin_db"
 Environment="MYSQL_PASSWORD=admin_db_passwd"
-ExecStart=/home/infralinker/infralinker_venv/bin/uwsgi --workers 5 --threads 20 --ini production.ini
+ExecStart=/home/infralinker/infralinker/.venv/bin/uwsgi --workers 5 --threads 20 --ini production.ini
 
 [Install]
 WantedBy=multi-user.target

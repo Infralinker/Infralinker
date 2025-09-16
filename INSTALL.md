@@ -77,6 +77,21 @@ $sudo yum install -y  python3.11 python3-pip git gcc gcc-c++  python3.11-devel  
 ```bash
 $sudo apt install python3-pip git gcc g++ python3-dev python3-venv zlib1g-dev libjpeg-dev python3-wheel
 ```
+
+
+**Installing uv packages management**
+
+Before proceeding, ensure that the 'uv' package manager is installed. If it is not installed, you can install it using the following command (using wget):
+
+```bash
+if ! command -v uv &> /dev/null; then
+	echo "uv not found, installing..."
+	wget -qO- https://astral.sh/uv/install.sh | sh
+else
+	echo "uv is already installed."
+fi
+```
+
 ### 8. mariadb installation and activation
 ```bash
 $sudo yum install mariadb-server
@@ -107,6 +122,7 @@ Change the **admin_db** password in this two files.
 install.sh **(line 41)**, export.sh **(line 7)** and nginx-conf/infralinkerd.service **(line 14)**
 
 ```bash
+$su - infralinker
 $cd /home/infralinker
 $git clone https://github.com/Infralinker/Infralinker.git infralinker
 $chown infralinker:nginx -R infralinker

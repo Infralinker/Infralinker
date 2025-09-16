@@ -24,5 +24,5 @@ echo "nginx install config."
 cp nginx-conf/nginx-infralinker.conf  /etc/nginx/conf.d/
 sed -i 's/user nginx/user infralinker/' /etc/nginx/nginx.conf
 
-systemctl enale nginx
+systemctl enable nginx
 systemctl start nginx

@@ -24,16 +24,17 @@ FLUSH PRIVILEGES;
 exit
 EOF
 
-echo "Creating a new virtual environment..."
-python3 -m venv $HOME/infralinker_venv
-source $HOME/infralinker_venv/bin/activate
+echo "Create Environement and Installing packages"
+# Ensure uv is installed and available
+if ! command -v uv &> /dev/null; then
+	echo "'uv' not found. Installing uv..."
+	wget -qO- https://astral.sh/uv/install.sh | sh
+	export PATH="$HOME/.local/bin:$PATH"
+	hash -r
+fi
+uv sync
+source $HOME/infralinker/.venv/bin/activate
 
-echo "Upgrading pip to the latest version..."
-pip install --upgrade pip
-
-echo "Installing required packages from requirements.txt..."
-#pip install -r requirements.txt
-pip install $(sed 's/[<>=!].*//' requirements.txt)
 echo "Exporting ENVs..."
 source export.sh
 
