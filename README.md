@@ -1,4 +1,17 @@
 # InfraLinker Project
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [About infralinker](#about-infralinker)
+- [Key Features](#key-features)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+ - [Installation](./INSTALL.md)
+ - [Contributing](./CONTRIBUTING.md)
+ - [Licence](./LICENCE)
+
+<a id="introduction"></a>
 <p align="center">
 <img src="images/big-logo.png" alt="InfraLinker big Logo" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
 </p>
@@ -15,6 +28,7 @@ __Password__ : Demo12345
 
 Welcome to InfraLinker, the comprehensive DataCenter infrastructure assets management Solution. Our software has been designed to help you link your DataCenter Infrastructure, server racks, VLANs / IPs, Suppliers, devices, applications, vulnerabilities, and external tickets with ease and efficiency. The InfraLinker software is a flexible tool that can help you quickly and easily configure, manage, and visualize your DataCenter infrastructures. With its intuitive user interface, you can easily create, update, and delete server racks, Network/IP, suppliers, devices, applications, and vulnerabilities, and provides you with an easy-to-use ticketing system that helps you keep track of external tickets and ensure that they are addressed in a timely manner. This helps you streamline your Infrastructure and ensure that any issues that arise are addressed quickly and efficiently.
 
+<a id="about-infralinker"></a>
 ## About infralinker
 <p align="center">
 <img src="images/diagrame_infraLinker.webp" alt="InfraLinker big Logo" style="width: 70%; display: block; margin-left: auto; margin-right: auto;">
@@ -38,6 +52,7 @@ Centralized database offers better security than traditional methods of manageme
 - __05 / Scalability__
 As the needs of your DataCenter change, the centralized database can be scaled to accommodate the growth. This ensures that the system remains relevant and effective, even as the size of the DataCenter expands.
 
+<a id="key-features"></a>
 ## Key Features
 
 InfraLinker was built specifically to serve the needs of IT engineers and operators. Below is a very brief overview of the core features it provides.
@@ -61,11 +76,13 @@ InfraLinker was built specifically to serve the needs of IT engineers and operat
 * Detailed, automatic change logging.
 * Email notifications for any new/closed tickets, vulnerabilities, or contracts.
   
+<a id="screenshots"></a>
 ## Screenshots ##
 ![InfraLinker big Logo](images/global-dashboard.png)
 ![InfraLinker big Logo](images/sp-dashboard.png)
 ![InfraLinker big Logo](images/ip-management.png)
 
+<a id="contributing"></a>
 ## 🤝 Contributing ##
 
 Contributions are welcome! Here’s how you can help:

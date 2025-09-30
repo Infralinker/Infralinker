@@ -7,6 +7,8 @@
 node_modules/
 dist/
 migrations/
+instance/
+.obsidian/
 #Ignore content of uploads folder
 static/uploads/projects/documents/*
 static/uploads/contracts/*
@@ -61,4 +63,4 @@ Thumbs.db
 *.mov
 *.wmv
 
-instance/config.py
+config.py
