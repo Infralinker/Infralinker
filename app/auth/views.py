@@ -101,7 +101,7 @@ def login():
             flash('Invalid email or password.' , 'danger')
 
     # load login template
-    return render_template('auth/login.html', form=form, title='LOGIN TO YOUR ACCOUNT')
+    return render_template('auth/login.jinja2', form=form, title='LOGIN TO YOUR ACCOUNT')
 
 @auth.route('/logout')
 @login_required
@@ -154,7 +154,7 @@ def edit_end_user(id):
     form.phone.data = admin.phone
     form.function.data = admin.function
 
-    return render_template('admin/users/register_new_admin.html', action="Edit",
+    return render_template('admin/users/register_new_admin.jinja2', action="Edit",
                            new_admin=new_admin, form=form,
                            admin=admin, title="Edit Admin")
 
@@ -177,7 +177,7 @@ def password_resetter(id):
 
         return redirect(url_for('home.user_dashboard'))
 
-    return render_template('admin/users/change_password.html',
+    return render_template('admin/users/change_password.jinja2',
                 form=form, title=('Reset your password'))
 
 #######################################
@@ -193,7 +193,7 @@ def suppliers_list():
     """
     suppliers = Supplier.query.all()
     contacts = Contact.query.all()
-    return render_template('auth/suppliers/suppliers.html',
+    return render_template('auth/suppliers/suppliers.jinja2',
                            suppliers=suppliers,
                            contacts=contacts,
                            title="SUPPLIERS LIST")
@@ -229,7 +229,7 @@ def new_supplier():
         return redirect(url_for('auth.suppliers_list'))
 
     # load department template
-    return render_template('auth/suppliers/supplier.html', action="Add",
+    return render_template('auth/suppliers/supplier.jinja2', action="Add",
                            new_supplier=new_supplier, form=form,
                            title="ADD NEW SUPPLIER")
 
@@ -270,7 +270,7 @@ def edit_supplier(id):
     form.notes.data = supplier.notes
 
 
-    return render_template('auth/suppliers/supplier.html', action="Edit",
+    return render_template('auth/suppliers/supplier.jinja2', action="Edit",
                            new_supplier=new_supplier, form=form,
                            supplier=supplier, title="Edit Supplier")
 
@@ -335,7 +335,7 @@ def supplier_details(id):
 
     graphSunBurt_Tickes_by_Supplier_id = json.dumps(figTicketBySupplierID, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('auth/suppliers/supplier_details.html', supplier=supplier,get_UserName=get_UserName,
+    return render_template('auth/suppliers/supplier_details.jinja2', supplier=supplier,get_UserName=get_UserName,
     devices=devices,contracts=contracts,tickets=tickets,contacts=contacts,check_expiration_date=check_expiration_date, 
     graphSunBurt_Tickes_by_Supplier_id=graphSunBurt_Tickes_by_Supplier_id, title="SHOW SUPPLIER DETAILS")
 
@@ -352,7 +352,7 @@ def list_contacts(supplier_id):
     """
     
     contacts = Contact.query.filter_by(supplier_id =supplier_id).all()
-    return render_template('auth/contacts/contacts.html',
+    return render_template('auth/contacts/contacts.jinja2',
                            contacts = contacts,
                            title="LISTE OF CONTACTS")
 
@@ -387,7 +387,7 @@ def new_contact():
         return redirect(url_for('auth.suppliers_list'))
 
     # load department template
-    return render_template('auth/contacts/contact.html', action="Add",
+    return render_template('auth/contacts/contact.jinja2', action="Add",
                            form=form, new_contact=new_contact,
                            title="ADD NEW CONTACT")
 
@@ -428,7 +428,7 @@ def edit_contact(id):
     form.phone.data = contact.phone
     form.notes.data = contact.notes
 
-    return render_template('auth/contacts/contact.html', action="Edit",
+    return render_template('auth/contacts/contact.jinja2', action="Edit",
                            new_contact=new_contact, form=form,
                            contact=contact, title="Edit contact")
 
@@ -483,7 +483,7 @@ def add_observation(id):
 
     form.vulnerabitlity_note.data = vulnerability.vulnerabitlity_note
 
-    return render_template('admin/vulnerabilities/observation.html', vulnerability=vulnerability,
+    return render_template('admin/vulnerabilities/observation.jinja2', vulnerability=vulnerability,
                            form=form, title="vulnerability Observation")
 
 ##################################################
@@ -508,7 +508,7 @@ def list_tickets():
 
     tickets = Ticket.query.order_by(priority_order).order_by(Ticket.open_date.desc()).all() 
 
-    return render_template('auth/tickets/tickets.html',
+    return render_template('auth/tickets/tickets.jinja2',
                            tickets=tickets,
                            title="LIST ALL TICKETS")
 
@@ -565,7 +565,7 @@ def new_ticket():
         return redirect(url_for('auth.list_tickets'))
 
     # load registration template
-    return render_template('auth/tickets/ticket.html', new_ticket=new_ticket, form=form, title='Nouvelle Ticket')
+    return render_template('auth/tickets/ticket.jinja2', new_ticket=new_ticket, form=form, title='Nouvelle Ticket')
 
 @auth.route('/tickets/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -625,7 +625,7 @@ def edit_ticket(id):
     form.status = ticket.status
     form.comments = ticket.comments
 
-    return render_template('auth/tickets/ticket.html', action="Edit",
+    return render_template('auth/tickets/ticket.jinja2', action="Edit",
                            new_ticket=new_ticket, form=form,
                            ticket=ticket, title="Edit Tickets")
 
@@ -672,7 +672,7 @@ def tickets_repport(ticket_status):
     else:
         tickets = Ticket.query.filter_by(status =ticket_status).order_by(Ticket.open_date.desc()).all()
 
-    return render_template('auth/tickets/repports/tickets_repport.html',
+    return render_template('auth/tickets/repports/tickets_repport.jinja2',
                         
                         tickets=tickets,
                         ticket_status = ticket_status,
@@ -688,7 +688,7 @@ def ticket_details(id):
     interventions = Intervention.query.filter_by(ticket_id = id).all()
     vulnerabilities = Vulnerability.query.filter_by(ticket_id = id).all()
 
-    return render_template('auth/tickets/ticket_details.html', ticket=ticket,get_UserName=get_UserName,
+    return render_template('auth/tickets/ticket_details.jinja2', ticket=ticket,get_UserName=get_UserName,
     interventions=interventions,vulnerabilities=vulnerabilities, title="SHOW TICKET DETAILS")
 
 ############################################
@@ -723,7 +723,7 @@ def new_intervention(id_ticket):
 
         return redirect(url_for('auth.list_tickets'))
 
-    return render_template('auth/interventions/intervention.html',new_intervention=new_intervention, intervention="Add", form=form,
+    return render_template('auth/interventions/intervention.jinja2',new_intervention=new_intervention, intervention="Add", form=form,
                            title="ADD NEW INTERVENTION")
 
 @auth.route('/interventions/tickets_<int:id_ticket>', methods=['GET'])
@@ -733,7 +733,7 @@ def list_interventions(id_ticket):
     List all intervention
     """
     interventions = Intervention.query.filter_by(ticket_id =id_ticket).all()
-    return render_template('auth/interventions/interventions.html',
+    return render_template('auth/interventions/interventions.jinja2',
                            interventions=interventions,
                            title="LIST ALL INTERVENTIONS")
 
@@ -766,7 +766,7 @@ def edit_intervention(id):
     form.admin.data = intervention.admin
     form.contact = intervention.contact
 
-    return render_template('auth/interventions/intervention.html',
+    return render_template('auth/interventions/intervention.jinja2',
                            new_intervention=new_intervention, form=form,
                            intervention=intervention, title="Edit intervention")
 
@@ -821,7 +821,7 @@ def new_action(project_id):
         return redirect(url_for('auth.list_actions', project_id=project.id))
 
     # load department template
-    return render_template('auth/actions/action.html', action="Add", form=form, new_action=new_action, project=project,
+    return render_template('auth/actions/action.jinja2', action="Add", form=form, new_action=new_action, project=project,
                            title="ADD NEW ACTION")
 
 # import plotly.figure_factory as ff
@@ -859,7 +859,7 @@ def list_actions(project_id):
     
     graphChart_For_Actions = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('auth/actions/actions.html',
+    return render_template('auth/actions/actions.jinja2',
                            actions=actions,
                            project_id=project_id,
                            graphChart_For_Actions=graphChart_For_Actions, 
@@ -896,7 +896,7 @@ def edit_action(id):
     form.execution_date = action.execution_date
     form.finish_date = action.finish_date
 
-    return render_template('auth/actions/action.html',
+    return render_template('auth/actions/action.jinja2',
                            new_action=new_action, form=form,
                            action=action, title="Edit action")
 
@@ -928,7 +928,7 @@ def tags_list():
     List all tags
     """
     tags = Tag.query.all()
-    return render_template('auth/tags/tags.html', get_UserName=get_UserName,
+    return render_template('auth/tags/tags.jinja2', get_UserName=get_UserName,
                            tags=tags, title="TAGS LISTE")
 
 @auth.route('/tag/add', methods=['GET', 'POST'])
@@ -961,7 +961,7 @@ def new_tag():
         return redirect(url_for('auth.tags_list'))
 
     # load department template
-    return render_template('auth/tags/tag.html', action="Add",
+    return render_template('auth/tags/tag.jinja2', action="Add",
                            new_tag=new_tag, form=form,
                            title="ADD NEW TAG")
 
@@ -989,7 +989,7 @@ def edit_tag(id):
     form.tag_description.data = tag.tag_description
     form.tag_color.data = tag.tag_color
 
-    return render_template('auth/tags/tag.html', action="Edit",
+    return render_template('auth/tags/tag.jinja2', action="Edit",
                            new_tag=new_tag, form=form,
                            tag=tag, title="Edit TAG")
 

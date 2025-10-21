@@ -134,7 +134,7 @@ def new_admin():
         return redirect(url_for('home.admin_dashboard'))
 
     # load registration template
-    return render_template('admin/users/register_new_admin.html', new_admin=new_admin,form=form, title='Register')
+    return render_template('admin/users/register_new_admin.jinja2', new_admin=new_admin,form=form, title='Register')
 
 #SHOW LIST OF ALL USERS
 @admin.route('/users', methods=['GET', 'POST'])
@@ -145,7 +145,7 @@ def list_admins():
     """
     check_admin()
     admins = Admin.query.all()
-    return render_template('admin/users/admins.html',
+    return render_template('admin/users/admins.jinja2',
                            admins=admins,
                            title="LISTE DES ADMINS")
 
@@ -233,7 +233,7 @@ def edit_admin(id):
     form.control_applications = admin.control_applications
     form.change_password.data = admin.change_password
 
-    return render_template('admin/users/register_new_admin.html', action="Edit Users",
+    return render_template('admin/users/register_new_admin.jinja2', action="Edit Users",
                            new_admin=new_admin, form=form,
                            admin=admin, title="Edit Admin")
 
@@ -256,7 +256,7 @@ def admin_password_resetter(id):
 
         return redirect(url_for('home.admin_dashboard'))
 
-    return render_template('admin/users/change_password.html',
+    return render_template('admin/users/change_password.jinja2',
                 form=form, title=('Reset Password!'))
 
 #################################################
@@ -274,7 +274,7 @@ def list_departments():
 
     departments = Department.query.all()
 
-    return render_template('admin/departments/departments.html',
+    return render_template('admin/departments/departments.jinja2',
                            departments=departments, title="Departments")
 
 @admin.route('/departments/add', methods=['GET', 'POST'])
@@ -305,7 +305,7 @@ def new_department():
         return redirect(url_for('admin.list_departments'))
 
     # load department template
-    return render_template('admin/departments/department.html', action="Add",
+    return render_template('admin/departments/department.jinja2', action="Add",
                            new_department=new_department, form=form,
                            title="Add Department")
 
@@ -333,7 +333,7 @@ def edit_department(id):
 
     form.description.data = department.description
     form.name.data = department.name
-    return render_template('admin/departments/department.html', action="Edit",
+    return render_template('admin/departments/department.jinja2', action="Edit",
                            new_department=new_department, form=form,
                            department=department, title="Edit Department")
 
@@ -380,7 +380,7 @@ def list_datacenters():
     List all datacenters
     """
     datacenters = Datacenter.query.all()
-    return render_template('admin/datacenters/datacenters.html',
+    return render_template('admin/datacenters/datacenters.jinja2',
                            datacenters=datacenters, get_cloud_provider_details=get_cloud_provider_details,
                            title="DATA CENTERS LIST")
 
@@ -408,7 +408,7 @@ def new_datacenter():
         return redirect(url_for('admin.list_datacenters'))
 
     # load registration template
-    return render_template('admin/datacenters/datacenter.html', new_datacenter=new_datacenter,form=form, title='NEW DATACENTER')
+    return render_template('admin/datacenters/datacenter.jinja2', new_datacenter=new_datacenter,form=form, title='NEW DATACENTER')
 
 # Check Datacenter dependencies
 def check_datacenter_dependencies(datacenter_id):
@@ -475,7 +475,7 @@ def edit_datacenter(id):
     form.dc_country.data = datacenter.dc_country
     form.dc_phone.data = datacenter.dc_phone
 
-    return render_template('admin/datacenters/datacenter.html', action="Edit",
+    return render_template('admin/datacenters/datacenter.jinja2', action="Edit",
                            new_datacenter=new_datacenter, form=form,
                            datacenter=datacenter, title="Edit DataCenter")
 
@@ -490,7 +490,7 @@ def list_racks():
     List all RACKS
     """
     racks = Rack.query.all()
-    return render_template('admin/racks/racks.html',
+    return render_template('admin/racks/racks.jinja2',
                            racks=racks,
                            get_tag_color=get_tag_color,
                            get_cloud_provider_details=get_cloud_provider_details,
@@ -525,7 +525,7 @@ def new_rack():
         return redirect(url_for('admin.list_racks'))
 
     # load registration template
-    return render_template('admin/racks/rack.html', new_rack=new_rack,form=form, get_tags_name=get_tags_name, title='NEW RACK')
+    return render_template('admin/racks/rack.jinja2', new_rack=new_rack,form=form, get_tags_name=get_tags_name, title='NEW RACK')
 
 
 def check_rack_dependencies(rack_id):    
@@ -588,7 +588,7 @@ def edit_rack(id):
     form.installation_date.data = rack.installation_date
     form.r_notes.data = rack.r_notes
 
-    return render_template('admin/racks/rack.html', action="Edit",
+    return render_template('admin/racks/rack.jinja2', action="Edit",
                            new_rack=new_rack, form=form,
                            get_tags_name=get_tags_name,
                            rack=rack, title="Edit Rack")
@@ -644,7 +644,7 @@ def new_platform():
         return redirect(url_for('admin.list_platforms'))
 
     # load department template
-    return render_template('admin/platforms/platform.html',new_platform=new_platform ,
+    return render_template('admin/platforms/platform.jinja2',new_platform=new_platform ,
                         platform="Add", form=form,
                         get_tags_name=get_tags_name,
                            title="ADD NEW DEVICE")
@@ -696,7 +696,7 @@ def new_platform_from_rack(id_rack):
         return redirect(url_for('admin.rack_overview', id=id_rack))
 
     # load department template
-    return render_template('admin/platforms/platform.html',new_platform=new_platform ,
+    return render_template('admin/platforms/platform.jinja2',new_platform=new_platform ,
                         platform="Add", form=form,
                         get_tags_name=get_tags_name,
                            title="ADD NEW PLATFORM")
@@ -708,7 +708,7 @@ def list_platforms():
     List all platforms
     """
     platforms = Platform.query.all()
-    return render_template('admin/platforms/platforms.html', date_comparator=date_comparator, check_expiration_date=check_expiration_date,
+    return render_template('admin/platforms/platforms.jinja2', date_comparator=date_comparator, check_expiration_date=check_expiration_date,
     platforms=platforms, title="LISTE ALL PLATFORMS")
 
 # LIST ALL PLATFORM FROM RACK
@@ -721,7 +721,7 @@ def list_platform_from_rack(id):
     """
     platforms = Platform.query.filter_by(rack_id=id).all()
 
-    return render_template('admin/platforms/platforms.html', date_comparator=date_comparator, check_expiration_date=check_expiration_date,get_tag_color=get_tag_color,
+    return render_template('admin/platforms/platforms.jinja2', date_comparator=date_comparator, check_expiration_date=check_expiration_date,get_tag_color=get_tag_color,
     platforms=platforms, title="LISTE ALL PLATFORMS FRM SELECTED RACK")
 
 @admin.route('/platform/edit/<int:id>', methods=['GET', 'POST'])
@@ -774,7 +774,7 @@ def edit_platform(id):
     form.network_identity.data = platform.network_identity
     form.notes.data = platform.notes
 
-    return render_template('admin/platforms/platform.html',
+    return render_template('admin/platforms/platform.jinja2',
                             get_tags_name=get_tags_name,
                            new_platform=new_platform, form=form,
                            platform=platform, title="Edit platform")
@@ -817,7 +817,7 @@ def platform_details(id):
     """
     platform = Platform.query.get_or_404(id)
     tickets = Ticket.query.filter_by(platform_id = id).all()
-    return render_template('admin/platforms/platform_details.html', 
+    return render_template('admin/platforms/platform_details.jinja2', 
     get_tag_color=get_tag_color, platform=platform, get_UserName=get_UserName, tickets=tickets,
     check_expiration_date=check_expiration_date,
     title="SHOW DEVICE DETAILS")
@@ -874,7 +874,7 @@ def rack_overview(id):
     rows = []
     query_rack_infos = query_details_rack(id)
     
-    pd.set_option('display.max_colwidth', -1)
+    pd.set_option('display.max_colwidth', None)
 
     if not query_pname_u_position(id).empty:
         query_is_empty = False
@@ -884,7 +884,7 @@ def rack_overview(id):
         query_is_empty = True
         
 
-    return render_template('admin/racks/rack_overview.html', 
+    return render_template('admin/racks/rack_overview.jinja2', 
                         rows=rows,query_rack_infos=query_rack_infos, 
                         query_is_empty=query_is_empty,id=id, 
                         check_expiration_date=check_expiration_date,
@@ -901,7 +901,7 @@ def devices_role_list():
     List all device roles
     """
     device_roles = Device_Role.query.all()
-    return render_template('admin/platforms/roles/roles.html',
+    return render_template('admin/platforms/roles/roles.jinja2',
                            device_roles=device_roles, title="DEVICE ROLES LISTE")
 
 @admin.route('/devicerole/new', methods=['GET', 'POST'])
@@ -927,7 +927,7 @@ def new_device_role():
             flash('Error: Device role already exists.')
 
         return redirect(url_for('admin.devices_role_list'))
-    return render_template('admin/platforms/roles/role.html', action="Add",
+    return render_template('admin/platforms/roles/role.jinja2', action="Add",
                            new_device_role=new_device_role, form=form,
                            title="ADD NEW DEVICE ROLE")
 
@@ -957,7 +957,7 @@ def edit_device_role(id):
     form.description.data = device_role.description
     form.device_color.data = device_role.device_color
 
-    return render_template('admin/platforms/roles/role.html', action="Edit",
+    return render_template('admin/platforms/roles/role.jinja2', action="Edit",
                            new_device_role=new_device_role, form=form,
                            device_role=device_role, title="EDIT DEVICE ROLE")
 
@@ -1026,7 +1026,7 @@ def new_network():
         return redirect(url_for('admin.list_networks'))
 
     # load department template
-    return render_template('admin/networks/network.html',new_network=new_network ,
+    return render_template('admin/networks/network.jinja2',new_network=new_network ,
     network="Add", form=form,
     get_tags_name=get_tags_name,
                            title="ADD NEW NETWORK")
@@ -1040,7 +1040,7 @@ def list_networks():
     """
     networks = Network.query.all()
 
-    return render_template('admin/networks/networks.html', networks=networks,
+    return render_template('admin/networks/networks.jinja2', networks=networks,
     get_subnet=get_subnet,
     get_total_hosts = get_total_hosts,
     get_ip_range = get_ip_range,
@@ -1087,7 +1087,7 @@ def edit_network(id):
     form.gatway.data = network.gatway
     form.net_notes.data = network.net_notes
 
-    return render_template('admin/networks/network.html',
+    return render_template('admin/networks/network.jinja2',
                            new_network=new_network, form=form,      
                            get_tags_name=get_tags_name,                     
                            network=network, title="Edit Network")
@@ -1156,7 +1156,7 @@ def new_server():
             flash('Failed to Save to database: '+ str(e), 'danger')
 
         return redirect(url_for('admin.list_servers'))
-    return render_template('admin/servers/server.html',new_server=new_server, get_tags_name=get_tags_name , get_applications_name=get_applications_name, server="Add", form=form,
+    return render_template('admin/servers/server.jinja2',new_server=new_server, get_tags_name=get_tags_name , get_applications_name=get_applications_name, server="Add", form=form,
                            title="ADD NEW SERVER")
 
 @admin.route('/server/new/network/<int:id_network>', methods=['GET', 'POST'])
@@ -1207,7 +1207,7 @@ def new_server_from_network(id_network):
                 flash('Failed to Save to database: '+ str(e), 'danger')
 
             return redirect(url_for('admin.list_servers'))
-    return render_template('admin/servers/server.html',new_server=new_server, get_tags_name=get_tags_name ,network=network, add_server_from_network=add_server_from_network, get_applications_name=get_applications_name, server="Add", form=form, get_subnet=get_subnet, get_cidr = get_cidr,
+    return render_template('admin/servers/server.jinja2',new_server=new_server, get_tags_name=get_tags_name ,network=network, add_server_from_network=add_server_from_network, get_applications_name=get_applications_name, server="Add", form=form, get_subnet=get_subnet, get_cidr = get_cidr,
                            title="ADD NEW SERVER")
 
 @admin.route('/servers/list', methods=['GET'])
@@ -1219,7 +1219,7 @@ def list_servers():
     """
     servers = Server.query.all()
 
-    return render_template('admin/servers/servers.html', servers=servers, 
+    return render_template('admin/servers/servers.jinja2', servers=servers, 
     check_ssh_connexion=check_ssh_connexion,
     get_tag_color=get_tag_color,
     title="LISTE ALL SERVERS")
@@ -1233,7 +1233,7 @@ def list_ip_from_network(id):
     """
     servers = Server.query.filter_by(network_id=id).all()
     
-    return render_template('admin/servers/servers.html', servers=servers,get_tag_color=get_tag_color, check_ssh_connexion=check_ssh_connexion ,title="LISTE ALL SERVERS FROM NETWORK")
+    return render_template('admin/servers/servers.jinja2', servers=servers,get_tag_color=get_tag_color, check_ssh_connexion=check_ssh_connexion ,title="LISTE ALL SERVERS FROM NETWORK")
 
 @admin.route('/server/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1287,7 +1287,7 @@ def edit_server(id):
     form.tags.data = server.tags
     form.applications_list.data =server.applications_list
 
-    return render_template('admin/servers/server.html',
+    return render_template('admin/servers/server.jinja2',
                            new_server=new_server, form=form,
                            get_tags_name=get_tags_name,
                            get_applications_name=get_applications_name,
@@ -1315,7 +1315,7 @@ def server_details(id):
     Show Server Details
     """
     server = Server.query.get_or_404(id)
-    return render_template('admin/servers/server_details.html',get_ports_from_app_name=get_ports_from_app_name,get_cloud_provider_details=get_cloud_provider_details, get_tag_color=get_tag_color, server=server, get_UserName=get_UserName,
+    return render_template('admin/servers/server_details.jinja2',get_ports_from_app_name=get_ports_from_app_name,get_cloud_provider_details=get_cloud_provider_details, get_tag_color=get_tag_color, server=server, get_UserName=get_UserName,
     title="SHOW SERVER DETAILS")
 
 ##########################################
@@ -1374,7 +1374,7 @@ def new_vulnerability():
         return redirect(url_for('admin.list_vulnerabilities'))
 
     # load department template
-    return render_template('admin/vulnerabilities/vulnerability.html',new_vulnerability=new_vulnerability ,vulnerability="Add", form=form,
+    return render_template('admin/vulnerabilities/vulnerability.jinja2',new_vulnerability=new_vulnerability ,vulnerability="Add", form=form,
                            title="ADD NEW VULNERABILITY")
 
 @admin.route('/vulnerabilities/list', methods=['GET'])
@@ -1386,7 +1386,7 @@ def list_vulnerabilities():
     """
     vulnerabilities = Vulnerability.query.order_by(Vulnerability.date_vulnerability.desc()).all()
 
-    return render_template('admin/vulnerabilities/vulnerabilities.html', vulnerabilities=vulnerabilities, title="LISTE ALL VULNERABILITIES")
+    return render_template('admin/vulnerabilities/vulnerabilities.jinja2', vulnerabilities=vulnerabilities, title="LISTE ALL VULNERABILITIES")
 
 @admin.route('/vulnerability/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1425,7 +1425,7 @@ def edit_vulnerability(id):
     form.admin.data = vulnerability.admin
     form.recommanded_solution.data = vulnerability.recommanded_solution
 
-    return render_template('admin/vulnerabilities/vulnerability.html',
+    return render_template('admin/vulnerabilities/vulnerability.jinja2',
                            new_vulnerability=new_vulnerability, form=form,
                            vulnerability=vulnerability, title="Edit Server")
 
@@ -1454,7 +1454,7 @@ def vulnerability_repport(id):
     form = VulnerabilityForm(obj=vulnerability)
     form_note = Add_Note_vunerability(obj=vulnerability)
 
-    return render_template('admin/vulnerabilities/vulnerability_repport.html', action="Show Rapport",
+    return render_template('admin/vulnerabilities/vulnerability_repport.jinja2', action="Show Rapport",
                            form=form,form_note=form_note, vulnerability=vulnerability, get_UserName=get_UserName, title="Show Rapport Vulnerabilite")
 
 
@@ -1502,7 +1502,7 @@ def new_project():
 
         return redirect(url_for('admin.list_projects'))
 
-    return render_template('admin/projects/project.html',new_project=new_project,get_members_name=get_members_name,get_contacts_fullname=get_contacts_fullname, get_tags_name=get_tags_name ,project="Add", form=form,
+    return render_template('admin/projects/project.jinja2',new_project=new_project,get_members_name=get_members_name,get_contacts_fullname=get_contacts_fullname, get_tags_name=get_tags_name ,project="Add", form=form,
                            title="ADD NEW PROJECT")
 
 @admin.route('/projects/list/', methods=['GET'])
@@ -1522,7 +1522,7 @@ def list_projects():
         projects = Project.query.filter_by(admin_id =current_user.id).all()
             
 
-    return render_template('admin/projects/projects.html', projects=projects, get_tag_color=get_tag_color, title="LISTE ALL SERVERS")
+    return render_template('admin/projects/projects.jinja2', projects=projects, get_tag_color=get_tag_color, title="LISTE ALL SERVERS")
 
 @admin.route('/project/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1583,7 +1583,7 @@ def edit_project(id):
     form.tags.data = project.tags
     form.admin.data = project.admin
 
-    return render_template('admin/projects/project.html',
+    return render_template('admin/projects/project.jinja2',
                            new_project=new_project, form=form,
                            get_members_name=get_members_name,
                            get_contacts_fullname=get_contacts_fullname,
@@ -1630,7 +1630,7 @@ def project_details(id):
     servers_list = Server.query.filter_by(project_id =id).all()
     tasks = Action.query.filter_by(project_id =id).all()
 
-    return render_template('admin/projects/project_report.html',
+    return render_template('admin/projects/project_report.jinja2',
         get_tag_color=get_tag_color, project=project,get_UserName=get_UserName,
         servers_list=servers_list,
         tasks=tasks,
@@ -1672,7 +1672,7 @@ def new_project_document(project_id):
 
         return redirect(url_for('admin.new_project_document', project_id=project_document.project_id))
 
-    return render_template('admin/projects/project_document.html',
+    return render_template('admin/projects/project_document.jinja2',
             new_project=new_project,project=project,
             project_document="Add",project_documents=project_documents, form=form, get_UserName=get_UserName,
                            title="ADD NEW DOCUMENT")
@@ -1750,7 +1750,7 @@ def new_contract():
 
         return redirect(url_for('admin.list_contracts'))
 
-    return render_template('admin/contracts/contract.html',new_contract=new_contract ,contract="Add", form=form,
+    return render_template('admin/contracts/contract.jinja2',new_contract=new_contract ,contract="Add", form=form,
                            title="ADD NEW CONTRACT")
 
 @admin.route('/contracts/list/', methods=['GET'])
@@ -1762,7 +1762,7 @@ def list_contracts():
     """
     contracts = Contract.query.all()
 
-    return render_template('admin/contracts/contracts.html', contracts=contracts,date_comparator=date_comparator,check_expiration_date=check_expiration_date, title="LISTE ALL CONTRACTS")
+    return render_template('admin/contracts/contracts.jinja2', contracts=contracts,date_comparator=date_comparator,check_expiration_date=check_expiration_date, title="LISTE ALL CONTRACTS")
 
 @admin.route('/contract/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -1799,7 +1799,7 @@ def edit_contract(id):
     form.notes.data = contract.notes
     form.supplier.data = contract.supplier
 
-    return render_template('admin/contracts/contract.html',
+    return render_template('admin/contracts/contract.jinja2',
                            new_contract=new_contract, form=form,
                            check_permission_assets=check_permission_assets,
                            contract=contract, title="Edit Contract")
@@ -1848,7 +1848,7 @@ def contract_details(id):
     contract = Contract.query.get_or_404(id)
     devices_list = Platform.query.filter_by(contract_id = id).all()
 
-    return render_template('admin/contracts/contract_details.html',
+    return render_template('admin/contracts/contract_details.jinja2',
     get_tag_color=get_tag_color, contract=contract, devices_list=devices_list, get_UserName=get_UserName,
     check_expiration_date=check_expiration_date,
     title="SHOW CONTRACT DETAILS")
@@ -1887,7 +1887,7 @@ def new_application():
 
         return redirect(url_for('admin.list_applications'))
 
-    return render_template('admin/applications/application.html',new_application=new_application ,application="Add", form=form,get_tags_name=get_tags_name,
+    return render_template('admin/applications/application.jinja2',new_application=new_application ,application="Add", form=form,get_tags_name=get_tags_name,
                            title="ADD NEW APPLICATION")
 
 @admin.route('/applications/list/', methods=['GET'])
@@ -1899,7 +1899,7 @@ def list_applications():
     """
     applications = Application.query.all()
 
-    return render_template('admin/applications/applications.html', 
+    return render_template('admin/applications/applications.jinja2', 
     applications=applications,
     get_tag_color=get_tag_color,get_UserName=get_UserName,
     date_comparator=date_comparator, title="LISTE ALL APPLICATIONS")
@@ -1938,7 +1938,7 @@ def edit_application(id):
     form.tags.data = application.tags
     
 
-    return render_template('admin/applications/application.html',
+    return render_template('admin/applications/application.jinja2',
                            new_application=new_application, form=form,
                            check_permission_assets=check_permission_assets,
                            get_tags_name=get_tags_name,
@@ -1988,7 +1988,7 @@ def settings_config():
             flash('Config Saved successfully!')
             return redirect(url_for('home.admin_dashboard'))
 
-        return render_template('admin/settings/settings.html',form=form,title="Edit Settings")
+        return render_template('admin/settings/settings.jinja2',form=form,title="Edit Settings")
 
     else :
         smtp_config = Emailling_config.query.get_or_404(1)
@@ -2007,7 +2007,7 @@ def settings_config():
         form.egroup_ticket.data = smtp_config.egroup_ticket
         form.egroup_contract.data = smtp_config.egroup_contract
 
-        return render_template('admin/settings/settings.html',form=form,smtp_config=smtp_config, title="Edit SMTP Settings")
+        return render_template('admin/settings/settings.jinja2',form=form,smtp_config=smtp_config, title="Edit SMTP Settings")
                            
 ###############################################
 ## CHANGE LOG AND HISTORY OFF MODIFICATION ####
@@ -2021,7 +2021,7 @@ def list_changelogs():
     check_admin()
     changelogs = ChangeLog.query.order_by(ChangeLog.change_date.desc()).all()
 
-    return render_template('admin/changelog/change_logs.html', changelogs=changelogs,get_UserName=get_UserName, title="LISTE ALL CHANGE")
+    return render_template('admin/changelog/change_logs.jinja2', changelogs=changelogs,get_UserName=get_UserName, title="LISTE ALL CHANGE")
 
 # Endpoint for removing data based on the selected time frame
 @admin.route('/remove_data/<int:months>')
@@ -2091,7 +2091,7 @@ def import_servers_data():
             insert_servers_data(textData)
         else:
             flash('NO DATA PROVIDED !', 'danger')
-    return render_template('admin/import/csv_servers.html', form=form, title="IMPORT SERVERS DATA")
+    return render_template('admin/import/csv_servers.jinja2', form=form, title="IMPORT SERVERS DATA")
 
 #### DEVICES IMPORT #############
 def insert_devices_data(data):
@@ -2138,7 +2138,7 @@ def import_platforms_data():
             insert_devices_data(textData)
         else:
             flash('NO DATA PROVIDED !', 'danger')
-    return render_template('admin/import/csv_platforms.html', form=form, title="IMPORT DEVICES DATA")
+    return render_template('admin/import/csv_platforms.jinja2', form=form, title="IMPORT DEVICES DATA")
 
 #### NETWORKS IMPORT ##############
 
@@ -2186,7 +2186,7 @@ def import_networks_data():
             insert_networks_data(textData)
         else:
             flash('NO DATA PROVIDED !', 'danger')
-    return render_template('admin/import/csv_networks.html', form=form, title="IMPORT NETWORKS DATA")
+    return render_template('admin/import/csv_networks.jinja2', form=form, title="IMPORT NETWORKS DATA")
 
 #### RACKS IMPORT ################### 
 
@@ -2230,7 +2230,7 @@ def import_racks_data():
             insert_racks_data(textData)
         else:
             flash('NO DATA PROVIDED !', 'danger')
-    return render_template('admin/import/csv_racks.html', form=form, title="IMPORT RACKS DATA")
+    return render_template('admin/import/csv_racks.jinja2', form=form, title="IMPORT RACKS DATA")
     
 
 #### APPLICATIONS  IMPORT #########
@@ -2278,5 +2278,5 @@ def import_applications_data():
             insert_applications_data(textData)
         else:
             flash('NO DATA PROVIDED !', 'danger')
-    return render_template('admin/import/csv_applications.html', form=form, title="IMPORT APPLICATIONS DATA")
+    return render_template('admin/import/csv_applications.jinja2', form=form, title="IMPORT APPLICATIONS DATA")
 

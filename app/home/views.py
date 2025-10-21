@@ -37,14 +37,14 @@ def homepage():
     """
     Render the homepage template on the / route
     """
-    return render_template('home/index.html', title="Welcome")
+    return render_template('home/index.jinja2', title="Welcome")
 
 @home.route('/documentations/help', methods=['GET'])
 def help():
     """
     Render the documentation template
     """
-    return render_template('documentations/index.html', title="InfraLinker Documentations")
+    return render_template('documentations/index.jinja2', title="InfraLinker Documentations")
 
 @home.route('/dashboard', methods=['GET'])
 @login_required
@@ -54,7 +54,7 @@ def user_dashboard():
     """
     datacenters = Datacenter.query.all()   
             
-    return render_template('admin/dashboard.html', title="Admin Dashboard",
+    return render_template('admin/dashboard.jinja2', title="Admin Dashboard",
                            query_count_ip_dc=query_count_ip_dc,
                            query_count_rack_dc=query_count_rack_dc,
                            query_count_u_dc=query_count_u_dc,
@@ -187,7 +187,7 @@ def admin_dashboard():
     fig_tickets_by_suppliers.update_layout(legend=dict(yanchor="top", y=1, xanchor="left", x=0.0))                                                      
     graphSunBurt_Tickes_by_Suppliers = json.dumps(fig_tickets_by_suppliers, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('admin/dashboard.html', title="Central Management  Dashboard",
+    return render_template('admin/dashboard.jinja2', title="Central Management  Dashboard",
                            query_count_ip_dc=query_count_ip_dc,
                            query_count_rack_dc=query_count_rack_dc,
                            query_count_ticket_dc=query_count_ticket_dc,
@@ -298,7 +298,7 @@ def infos_datacenters(id_datacenter):
     fig_server_type_by_dc.update_layout(legend=pie_chart_unified_legende)
     graphBar_server_type_by_dc = json.dumps(fig_server_type_by_dc, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template('admin/detailed_dashboard.html',    
+    return render_template('admin/detailed_dashboard.jinja2',    
                            datacenter_name = datacenter_name,
                            query_count_ip_dc=query_count_ip_dc,
                            query_count_rack_dc=query_count_rack_dc,                           
